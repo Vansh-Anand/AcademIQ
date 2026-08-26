@@ -1,0 +1,28 @@
+prior_attack_probability: 0.05
+model_version: "1.0"
+description: "EXPERT-CONFIGURED"
+
+# Conditional Probability Tables
+# P(Evidence | State)
+cpts:
+  SDNViolation:
+    attack: 0.30
+    normal: 0.01
+  RestrictedAccess:
+    attack: 0.25
+    normal: 0.02
+  UnexpectedProcess:
+    attack: 0.40
+    normal: 0.05
+  NetworkActivity:
+    attack: 0.50
+    normal: 0.20
+  Ptrace:
+    attack: 0.15
+    normal: 0.001
+  BehavioralDivergence:
+    attack: 0.60
+    normal: 0.05
+  MultiStepChain:
+    attack: 0.45
+    normal: 0.01

@@ -1,0 +1,6 @@
+enabled: true
+window_seconds: 30
+max_nodes: 10000
+max_edges: 50000
+temporal_decay_lambda: 0.05
+correlation_tolerance_ms: 5000

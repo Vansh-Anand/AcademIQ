@@ -1,0 +1,8 @@
+enabled: true
+policy_version: "1.0"
+warn_threshold: 35
+throttle_threshold: 65
+freeze_threshold: 85
+hysteresis: true
+cooldown_seconds: 5
+telemetry_failure_mode: "CONSERVATIVE"

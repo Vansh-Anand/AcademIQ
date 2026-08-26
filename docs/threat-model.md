@@ -17,3 +17,9 @@
 ## Residual Risks
 - Native OS races (e.g. symlink resolution on Windows vs Linux O_PATH) remain platform-specific limitations.
 - Highly esoteric, Turing-complete bash subshell evaluations that cannot be statically parsed are forced into an "Unresolved" state, which strictly fails closed.
+
+## L6 Threat Model (ECES)
+- **Threat (Log Tampering)**: An attacker with file-system access modifies `evidence.jsonl` to erase traces of an attack.
+- **Mitigation**: Cryptographic sequential hashing (`H_n = Hash(payload || H_{n-1})`) makes any backward mutation immediately detectible by the `EvidenceVerifier` as a `PAYLOAD_HASH_MISMATCH` or `CHAIN_BREAK`.
+- **Threat (Toxic Log Injection)**: An agent generates outputs containing highly sensitive raw secrets which get permanently hashed into the immutable log.
+- **Mitigation**: `EvidenceRedactionPolicy` strips known sensitive fields before canonical serialization.

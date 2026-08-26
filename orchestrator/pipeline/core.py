@@ -3,10 +3,25 @@ from common.schemas.security import SecurityDecision, DecisionEnum
 import time
 import uuid
 
+from l6_eces.crypto.hasher import HashProvider
+from l6_eces.crypto.signer import SoftwareSigner
+from l6_eces.chain.store import EvidenceStore
+from l6_eces.chain.writer import EvidenceChainWriter
+from l6_eces.redaction.policy import EvidenceRedactionPolicy
+
 class AcademiqOrchestrator:
     def __init__(self, mode: str = "simulation"):
         self.mode = mode
         self.session_id = str(uuid.uuid4())
+        
+        # ECES setup
+        self.eces_store = EvidenceStore()
+        self.eces_hasher = HashProvider()
+        self.eces_signer = SoftwareSigner()
+        self.eces_signer.generate_key()
+        self.eces_writer = EvidenceChainWriter(self.eces_store, self.eces_hasher, self.eces_signer)
+        self.eces_redactor = EvidenceRedactionPolicy(mode="STANDARD")
+        
         print(f"[Orchestrator] Initialized in {self.mode.upper()} mode. Session: {self.session_id}")
 
     def process_event(self, event) -> SecurityDecision:
@@ -78,6 +93,15 @@ class AcademiqOrchestrator:
                 raw_command=mock_shell_cmd
             )
             
+            # Persist L1 and L2 events
+            redacted_event = self.eces_redactor.redact(event.model_dump())
+            event_copy = type(event)(**redacted_event)
+            self.eces_writer.append_event(event_copy, source_layer="L1")
+            
+            redacted_shell = self.eces_redactor.redact(shell_event.model_dump())
+            shell_copy = ShellCommandEvent(**redacted_shell)
+            self.eces_writer.append_event(shell_copy, source_layer="L2")
+            
             l2_decision, locked_ast = l2_interceptor.intercept(shell_event)
             
             if l2_decision.decision == DecisionEnum.BLOCK:
@@ -125,8 +149,32 @@ class AcademiqOrchestrator:
             related_event_ids=[event.event_id, div_event.event_id],
             timestamp_ns=time.time_ns()
         )
+        
+        # Persist L4 Divergence
+        redacted_div = self.eces_redactor.redact(div_event.model_dump())
+        div_copy = DivergenceEvent(**redacted_div)
+        self.eces_writer.append_event(div_copy, source_layer="L4")
 
         print("Enforcement -> None (ALLOW)")
-        print("ECES -> Generating mock hash chain record...")
+        print("ECES -> Generating hash chain record for decision...")
+        
+        # We can mock a RiskChainEvent or EnforcementEvent wrapping the decision
+        from common.events.schemas import EnforcementEvent
+        enf_event = EnforcementEvent(
+            event_id=f"enf-{uuid.uuid4()}",
+            timestamp_ns=time.time_ns(),
+            trace_id=event.trace_id,
+            layer="L5",
+            incident_id=f"inc-{uuid.uuid4()}",
+            cgroup_id="test",
+            action=decision.decision.value,
+            reason=",".join(decision.reason_codes),
+            risk_score=decision.risk_score,
+            trigger_event_ids=decision.related_event_ids,
+            success=True,
+            operator_source="SYSTEM"
+        )
+        self.eces_writer.append_event(enf_event, source_layer="L5")
+        
         print(f"--- Event Processing Complete. Final Decision: {decision.decision.value} ---")
         return decision

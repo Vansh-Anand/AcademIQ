@@ -4,6 +4,12 @@ import time
 import uuid
 import json
 
+from cli.l1_cli import register_commands as register_l1_commands
+from cli.l2_cli import register_commands as register_l2_commands
+from cli.l3_cli import register_commands as register_l3_commands
+from cli.l4_cli import register_commands as register_l4_commands
+from cli.l5_cli import register_commands as register_l5_commands
+from cli.eces_cli import register_commands as register_eces_commands
 from scripts.setup.discover import discover_environment
 from orchestrator.pipeline.core import AcademiqOrchestrator
 from common.events.schemas import ToolInvocationEvent
@@ -11,6 +17,13 @@ from common.events.schemas import ToolInvocationEvent
 def main():
     parser = argparse.ArgumentParser(description="AcademIQ Security Interceptor")
     subparsers = parser.add_subparsers(dest="command")
+
+    register_l1_commands(subparsers)
+    register_l2_commands(subparsers)
+    register_l3_commands(subparsers)
+    register_l4_commands(subparsers)
+    register_l5_commands(subparsers)
+    register_eces_commands(subparsers)
 
     # Doctor Command
     doctor_parser = subparsers.add_parser("doctor", help="Inspect the current environment")
@@ -119,8 +132,34 @@ def main():
         print("ERROR: Execution is disabled in Phase 3. The pipeline verifies security decisions safely without evaluating commands.")
         sys.exit(1)
 
+    elif args.command == "l4":
+        from cli.l4_cli import handle_l4_train
+        if args.l4_cmd == "train":
+            handle_l4_train(args)
+    elif args.command == "riskchain":
+        from cli.l5_cli import handle_riskchain_status
+        if args.rc_cmd == "status":
+            handle_riskchain_status(args)
+    elif args.command == "governance":
+        from cli.l5_cli import handle_governance_evaluate
+        if args.gov_cmd == "evaluate":
+            handle_governance_evaluate(args)
     else:
         parser.print_help()
 
 if __name__ == "__main__":
+    from cli.l4_cli import setup_parser as setup_l4_parser
+    from cli.l5_cli import setup_parser as setup_l5_parser
+    # We must patch the parser in main
+    import argparse
+    # This is a hacky injection but works for our script without breaking others
+    old_parse = argparse.ArgumentParser.parse_args
+    def hooked_parse(self, *a, **kw):
+        # Find subparsers action and add our l4_parser
+        for action in self._actions:
+            if isinstance(action, argparse._SubParsersAction):
+                setup_l4_parser(action)
+                setup_l5_parser(action)
+        return old_parse(self, *a, **kw)
+    argparse.ArgumentParser.parse_args = hooked_parse
     main()
