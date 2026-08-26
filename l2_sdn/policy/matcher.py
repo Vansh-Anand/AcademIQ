@@ -1,61 +1,53 @@
 import yaml
 import os
-from typing import Dict, Any, List, Tuple
+from typing import Tuple
+from ..events import CanonicalCommand
 
-class SemanticPolicyMatcher:
-    def __init__(self, policy_path: str):
+class CommandPolicyMatcher:
+    def __init__(self, policy_path: str = "config/policies/shell.yaml"):
         try:
             with open(policy_path, "r") as f:
                 self.policy = yaml.safe_load(f) or {}
         except Exception as e:
-            # Fail closed on missing policy
+            # Fail closed
             raise RuntimeError(f"Could not load SDN policy from {policy_path}: {e}")
             
-    def match(self, ast: Dict[str, Any]) -> Tuple[bool, str]:
+    def match(self, canon_ast: CanonicalCommand) -> Tuple[str, str]:
         """
-        Evaluates the canonical AST against the loaded policy.
-        Returns (is_allowed, reason).
+        Evaluates the CanonicalCommand against the loaded policy.
+        Returns (decision, reason). Decision is ALLOW, BLOCK, or REVIEW.
         """
-        # 1. Executable check (we check the basename since canonicalizer resolves absolute path)
-        exe = ast["executable"]
+        exe = canon_ast.executable
         exe_basename = os.path.basename(exe)
-        # Handle Windows .exe extension
         if exe_basename.endswith(".exe"):
             exe_basename = exe_basename[:-4]
             
-        allowed_exes = self.policy.get("allowed_executables", [])
-        if exe_basename not in allowed_exes and exe not in allowed_exes:
-            return False, f"Executable '{exe}' is not in allowed list."
-            
-        # 2. Syntax flags check
-        flags = ast.get("flags", {})
-        if flags.get("has_pipeline") and not self.policy.get("allow_pipelines", False):
-            return False, "Pipelines are forbidden by policy."
-        if flags.get("has_redirection") and not self.policy.get("allow_redirection", False):
-            return False, "Redirections are forbidden by policy."
-            
-        # 3. Argument checks
-        forbidden_args = self.policy.get("forbidden_arguments", [])
-        forbidden_dirs = self.policy.get("forbidden_directories", [])
+        allowed = self.policy.get("allowed_commands", [])
+        blocked = self.policy.get("blocked_commands", [])
         
-        for arg in ast["arguments"]:
-            if arg in forbidden_args:
-                return False, f"Forbidden argument detected: '{arg}'"
+        # 1. Denylist check
+        if exe_basename in blocked or exe in blocked:
+            return "BLOCK", f"SDN_BLOCKED_COMMAND: {exe_basename}"
+            
+        # 2. Allowlist check
+        if exe_basename not in allowed and exe not in allowed:
+            return "BLOCK", f"SDN_POLICY_VIOLATION: Executable '{exe_basename}' not explicitly allowed."
+            
+        # 3. Path Restrictions
+        restricted_paths = self.policy.get("restricted_paths", [])
+        for cp in canon_ast.canonical_paths:
+            path_str = cp.canonical_path.replace("\\", "/") if cp.canonical_path else cp.raw_path
+            # Ignore Windows drive for test portability
+            if ":" in path_str and path_str[1] == ":":
+                path_str = path_str[2:]
                 
-            # Path containment check for forbidden directories
-            # Since ast arguments are canonicalized (absolute), we can check prefix
-            arg_norm = arg.replace("\\", "/")
-            # Remove drive letter for cross-platform checking
-            if ":" in arg_norm and arg_norm[1] == ":":
-                arg_norm = arg_norm[2:]
+            for rpath in restricted_paths:
+                rpath_norm = rpath.replace("\\", "/")
+                if ":" in rpath_norm and rpath_norm[1] == ":":
+                    rpath_norm = rpath_norm[2:]
                 
-            for fdir in forbidden_dirs:
-                fdir_norm = fdir.replace("\\", "/")
-                if ":" in fdir_norm and fdir_norm[1] == ":":
-                    fdir_norm = fdir_norm[2:]
+                # Check prefix/exact match
+                if path_str.startswith(rpath_norm):
+                    return "BLOCK", f"SDN_PATH_RESTRICTED: Access to '{rpath}' is restricted."
                     
-                # Simple prefix check
-                if arg_norm.startswith(fdir_norm):
-                    return False, f"Argument '{arg}' accesses forbidden directory '{fdir}'."
-                    
-        return True, "Passed all SDN semantic checks."
+        return "ALLOW", "SDN_ALLOWED"

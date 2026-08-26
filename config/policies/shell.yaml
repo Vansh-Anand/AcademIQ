@@ -1,0 +1,37 @@
+# L2 Semantic Defense Network (SDN) Core Policy
+
+allowed_commands:
+  - "pwd"
+  - "ls"
+  - "cat"
+  - "echo"
+  - "read_file"
+  - "ll"
+
+blocked_commands:
+  - "rm"
+  - "mkfs"
+  - "shutdown"
+  - "reboot"
+  - "bash"
+  - "sh"
+  
+restricted_paths:
+  - "/etc/passwd"
+  - "/etc/shadow"
+  - "/root"
+  - "/proc"
+  - "/sys"
+  - "C:\\Windows"
+  - "C:\\System32"
+
+allowed_paths:
+  - "/tmp"
+  - "/app/config.yaml"
+  - "."
+
+privilege_policy:
+  allow_sudo: false
+
+network_policy:
+  allow_curl: false

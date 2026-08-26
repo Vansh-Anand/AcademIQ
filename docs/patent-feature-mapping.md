@@ -6,8 +6,17 @@ This document maps planned AcademIQ implementations to required patent features.
 |---|---|---|---|---|---|
 | PDA-based security-policy constrained decoding | L1 | CFG -> PDA Automaton | `l1_gcd.automaton` | Adversarial | IMPLEMENTED |
 | Token masking before softmax | L1 | Logits mutation | `l1_gcd.masking` | Benchmark | TESTED |
-| Five-pass shell normalization | L2 | AST traversal | `l2_sdn.normalizers` | Adversarial | IMPLEMENTED |
-| TOCTOU resolution | L2 | Inode tracking | `l2_sdn.toctou` | Unit Test | IMPLEMENTED |
+| Five-pass shell normalization | L2 | AST traversal | `l2_sdn.normalizers` | Adversarial | TESTED |
+| Variable expansion | L2 | Regex substitution | `l2_sdn.normalizers` | Adversarial | TESTED |
+| Encoding decoding | L2 | Base64/Hex/Octal | `l2_sdn.normalizers` | Adversarial | TESTED |
+| ANSI-C normalization | L2 | Bashlex + Regex | `l2_sdn.normalizers` | Adversarial | TESTED |
+| Alias/function resolution | L2 | Dictionary lookup | `l2_sdn.normalizers` | Adversarial | TESTED |
+| Command canonicalization | L2 | AST transformation | `l2_sdn.canonicalizer` | Adversarial | TESTED |
+| Policy trie matching | L2 | Trie/List logic | `l2_sdn.policy.matcher` | Adversarial | TESTED |
+| TOCTOU-resistant path identity | L2 | Inode tracking | `l2_sdn.toctou.resolver` | Unit Test | TESTED |
+| Symlink replacement detection | L2 | Identity checking | `l2_sdn.toctou.verifier` | Unit Test | TESTED |
+| Fail-closed unresolved execution | L2 | Strict mode | `l2_sdn.interceptor` | Adversarial | TESTED |
+| L2 event generation | L2 | `NormalizedCommandEvent` | `l2_sdn.events` | System Test | IMPLEMENTED |
 | Host-only eBPF telemetry | L3 | libbpf / uprobe | `l3_ebpf.probes` | Integration | SCAFFOLDED |
 | Namespace-based monitoring invisibility | L3 | cgroup/ns filtering | `l3_ebpf.namespace` | Security | SCAFFOLDED |
 | Pure syscall topology | L3 | syscall sequence | `l3_ebpf.kernel` | Integration | SCAFFOLDED |

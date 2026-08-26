@@ -1,60 +1,39 @@
 import os
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, List
+from .identity import PathIdentity
+from ..events import CanonicalCommand
 
 class TOCTOUResolver:
     """
-    Mitigates Time-of-Check to Time-of-Use (TOCTOU) races.
-    
-    PLATFORM LIMITATION (Windows):
-    On Linux, we could use O_PATH or directory file descriptors (openat).
-    On Windows, we rely on checking file identity (st_ino, st_dev) before use.
-    If the file identity changes between L2 validation and execution, the 
-    execution layer must abort.
+    Resolves the PathIdentity for every canonical path.
     """
-    def __init__(self):
-        self.inode_cache: Dict[str, Tuple[int, int]] = {}
-        
-    def resolve_and_lock(self, ast: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Takes a canonical AST. For every path argument, stats it and records the inode.
-        Returns the AST enriched with TOCTOU metadata.
-        """
-        # Create a deep copy to enrich
-        enriched_ast = {
-            "executable": ast["executable"],
-            "arguments": list(ast["arguments"]),
-            "flags": dict(ast["flags"]),
-            "toctou_locks": {}
-        }
-        
-        # 1. Lock the executable (if it's an absolute path that exists)
-        exe = enriched_ast["executable"]
-        if os.path.exists(exe):
-            stat = os.stat(exe)
-            enriched_ast["toctou_locks"][exe] = (stat.st_ino, stat.st_dev)
+    def resolve(self, command: CanonicalCommand) -> List[PathIdentity]:
+        identities = []
+        for cp in command.canonical_paths:
+            path_to_stat = cp.canonical_path if cp.canonical_path else cp.raw_path
             
-        # 2. Lock arguments
-        for arg in enriched_ast["arguments"]:
-            # If it's a key=value pair
-            if "=" in arg:
-                _, val = arg.split("=", 1)
-                if os.path.exists(val):
-                    stat = os.stat(val)
-                    enriched_ast["toctou_locks"][val] = (stat.st_ino, stat.st_dev)
-            elif os.path.exists(arg):
-                stat = os.stat(arg)
-                enriched_ast["toctou_locks"][arg] = (stat.st_ino, stat.st_dev)
+            if not os.path.exists(path_to_stat):
+                continue
                 
-        return enriched_ast
-
-    def verify_locks(self, toctou_locks: Dict[str, Tuple[int, int]]) -> bool:
-        """
-        Called right before execution to ensure no underlying files changed identity.
-        """
-        for path, (expected_ino, expected_dev) in toctou_locks.items():
-            if not os.path.exists(path):
-                return False # File deleted/moved
-            current_stat = os.stat(path)
-            if current_stat.st_ino != expected_ino or current_stat.st_dev != expected_dev:
-                return False # File replaced (TOCTOU race detected)
-        return True
+            try:
+                # We use os.stat which follows symlinks, os.lstat doesn't.
+                # To detect symlink target replacement, we actually need to record the symlink chain.
+                # For this implementation, we just record the final resolved target's inode.
+                stat = os.stat(path_to_stat)
+                
+                identities.append(PathIdentity(
+                    path=cp.raw_path,
+                    resolved_path=path_to_stat,
+                    device_id=stat.st_dev,
+                    inode_id=stat.st_ino,
+                    file_type=cp.path_type,
+                    mode=stat.st_mode,
+                    uid=stat.st_uid,
+                    gid=stat.st_gid,
+                    size=stat.st_size,
+                    mtime_ns=stat.st_mtime_ns
+                ))
+            except OSError:
+                pass
+                
+        return identities

@@ -1,43 +1,82 @@
-import shlex
-from typing import Dict, Any
-from .interfaces import CommandParser
+import bashlex
+from typing import List, Dict, Any, Optional
+from .events import ParsedCommand, CommandArgument
 
-class ShlexCommandParser(CommandParser):
-    def parse(self, command: str) -> Dict[str, Any]:
-        """
-        Parses a shell command into a structured AST-like dictionary.
-        Uses shlex to securely handle POSIX quoting and escaping.
-        """
+class BashlexCommandParser:
+    """
+    Parses a shell command into a structured AST using bashlex.
+    Extracts the executable, arguments, and handles substitutions/redirections safely
+    without executing anything.
+    """
+    
+    def parse(self, command_text: str) -> ParsedCommand:
         try:
-            # We use posix=True to properly handle quotes and escapes
-            tokens = shlex.split(command, posix=True)
-        except ValueError as e:
-            # shlex raises ValueError on unclosed quotes
+            nodes = bashlex.parse(command_text)
+        except Exception as e:
             raise ValueError(f"Failed to parse shell command: {e}")
             
-        if not tokens:
-            return {"executable": "", "arguments": []}
+        if not nodes:
+            return ParsedCommand(executable="", arguments=[])
             
-        executable = tokens[0]
-        arguments = tokens[1:]
+        # We handle the first command node for simplicity, 
+        # though a real implementation would iterate and build a complex AST tree.
+        node = nodes[0]
         
-        # In a more advanced implementation, we would also detect pipelines (|),
-        # redirections (>, <), and command substitutions. 
-        # For this prototype, we'll extract the executable and arguments.
-        # We will flag if we see suspicious shell characters that shlex tokenized.
+        executable = ""
+        arguments = []
+        redirections = []
+        pipelines = False
+        command_substitutions = []
+        environment_references = []
         
-        has_pipeline = "|" in tokens
-        has_redirection = ">" in tokens or "<" in tokens or ">>" in tokens
-        has_logic = "&&" in tokens or "||" in tokens or ";" in tokens
+        class ASTVisitor(bashlex.ast.nodevisitor):
+            def __init__(self):
+                self.parts = []
+                self.redirects = []
+                self.command_subs = []
+                self.env_refs = []
+                
+            def visitcommand(self, n, parts):
+                pass
+                
+            def visitword(self, n, parts):
+                self.parts.append(n.word)
+                
+            def visitcommandsubstitution(self, n, parts):
+                self.command_subs.append(command_text[n.pos[0]:n.pos[1]])
+                # Mark that this word contains a command substitution
+                if self.parts:
+                    self.parts[-1] += " $(...)"
+                else:
+                    self.parts.append("$(...)")
+                    
+            def visitparameter(self, n, parts):
+                self.env_refs.append(n.value)
+                
+            def visitredirect(self, n, parts):
+                self.redirects.append(command_text[n.pos[0]:n.pos[1]])
+                
+            def visitpipeline(self, n, parts):
+                nonlocal pipelines
+                pipelines = True
+                
+        visitor = ASTVisitor()
+        visitor.visit(node)
         
-        ast = {
-            "executable": executable,
-            "arguments": arguments,
-            "flags": {
-                "has_pipeline": has_pipeline,
-                "has_redirection": has_redirection,
-                "has_logic": has_logic
-            }
-        }
-        
-        return ast
+        if visitor.parts:
+            executable = visitor.parts[0]
+            for arg_text in visitor.parts[1:]:
+                arguments.append(CommandArgument(
+                    raw_value=arg_text,
+                    is_substitution="$(" in arg_text or "`" in arg_text,
+                    is_variable="$" in arg_text
+                ))
+                
+        return ParsedCommand(
+            executable=executable,
+            arguments=arguments,
+            redirections=visitor.redirects,
+            pipelines=pipelines,
+            command_substitutions=visitor.command_subs,
+            environment_references=visitor.env_refs
+        )

@@ -1,47 +1,73 @@
 import os
 import shutil
-from typing import Dict, Any
-from .interfaces import CommandCanonicalizer
+import hashlib
+from typing import Dict, Any, List
+from .events import NormalizedCommand, CanonicalCommand, CommandPath
 
-class ASTCanonicalizer(CommandCanonicalizer):
+class CommandCanonicalizer:
     """
     Transforms a normalized AST into a canonical representation.
-    This resolves the exact executable path and absolute paths for arguments.
+    Resolves exact executable path and absolute paths for arguments.
+    (Pass 5 of the normalizer pipeline)
     """
-    def canonicalize(self, ast: Dict[str, Any]) -> Dict[str, Any]:
-        executable = ast["executable"]
+    def canonicalize(self, ast: NormalizedCommand) -> CanonicalCommand:
+        parsed = ast.normalized_ast
+        executable = parsed.executable
         
         # 1. Resolve Executable
-        # If it's a built-in or not found, which returns None. We keep original if None.
         resolved_exe = shutil.which(executable)
         canonical_exe = resolved_exe if resolved_exe else executable
-        # Ensure forward slashes for cross-platform consistency
         canonical_exe = canonical_exe.replace("\\", "/")
         
-        # 2. Resolve Arguments
+        # 2. Resolve Arguments and Paths
         canonical_args = []
-        for arg in ast["arguments"]:
-            # Check if argument is likely a path that exists
-            # For security, we might want to canonicalize ANYTHING that looks like a path
-            # But resolving non-paths can corrupt data.
-            # Strategy: if os.path.exists or it has slash, we try to realpath it.
+        canonical_paths = []
+        
+        for idx, arg in enumerate(parsed.arguments):
+            val = arg.resolved_value or arg.raw_value
             
-            if "/" in arg or "\\" in arg:
-                if "=" in arg:
-                    key, val = arg.split("=", 1)
-                    if "/" in val or "\\" in val:
-                        # try to resolve absolute path (handles symlinks on Linux, reparse points on Windows to some degree)
-                        val = os.path.realpath(os.path.abspath(val))
-                        val = val.replace("\\", "/")
-                        arg = f"{key}={val}"
+            is_path = False
+            resolved_path = None
+            
+            # Heuristic for paths
+            if "/" in val or "\\" in val or os.path.exists(val):
+                if "=" in val:
+                    key, path_part = val.split("=", 1)
+                    if "/" in path_part or "\\" in path_part or os.path.exists(path_part):
+                        resolved_path = os.path.realpath(os.path.abspath(path_part)).replace("\\", "/")
+                        canonical_args.append(f"{key}={resolved_path}")
+                        is_path = True
+                    else:
+                        canonical_args.append(val)
                 else:
-                    arg = os.path.realpath(os.path.abspath(arg))
-                    arg = arg.replace("\\", "/")
-            
-            canonical_args.append(arg)
-            
-        return {
-            "executable": canonical_exe,
-            "arguments": canonical_args,
-            "flags": ast["flags"]
-        }
+                    resolved_path = os.path.realpath(os.path.abspath(val)).replace("\\", "/")
+                    canonical_args.append(resolved_path)
+                    is_path = True
+            else:
+                canonical_args.append(val)
+                
+            if is_path and resolved_path:
+                path_type = "UNKNOWN"
+                if os.path.exists(resolved_path):
+                    path_type = "DIRECTORY" if os.path.isdir(resolved_path) else "FILE"
+                
+                canonical_paths.append(CommandPath(
+                    raw_path=val,
+                    canonical_path=resolved_path,
+                    path_type=path_type,
+                    source_argument_index=idx
+                ))
+                
+        # Calculate canonical text and hash
+        canonical_text = f"{canonical_exe} " + " ".join(canonical_args)
+        command_hash = hashlib.sha256(canonical_text.encode()).hexdigest()
+        
+        return CanonicalCommand(
+            executable=canonical_exe,
+            canonical_arguments=canonical_args,
+            canonical_paths=canonical_paths,
+            canonical_environment={}, # To be extracted from parsed.environment_references in full impl
+            canonical_redirections=parsed.redirections,
+            canonical_text=canonical_text,
+            command_hash=command_hash
+        )
