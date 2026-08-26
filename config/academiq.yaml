@@ -1,0 +1,83 @@
+agent:
+  model: "llama3.1:8b"
+  runtime: "ollama"
+
+gcd:
+  enabled: true
+  grammar: "default"
+  strict_mode: true
+  max_latency_ms: 100
+
+sdn:
+  enabled: true
+  passes: 5
+  canonicalization: "strict"
+  policy_mode: "enforce"
+
+toctou:
+  enabled: true
+  inode_binding: true
+  device_binding: true
+  symlink_policy: "strict"
+
+ebpf:
+  enabled: false
+  tracepoints: ["sys_enter_execve", "sys_enter_openat"]
+  ring_buffer_size: 4096
+  flush_interval_ms: 100
+  host_pin_path: "/sys/fs/bpf/academiq"
+
+divergence:
+  enabled: true
+  window_size: 10
+  siamese_weight: 0.6
+  isolation_forest_weight: 0.4
+  threshold: 0.85
+
+ece:
+  baseline_size: 1000
+  recalibration_interval: 3600
+  static_threshold: 0.90
+  dynamic_percentile: 0.95
+
+hpc:
+  enabled: false
+  counters: ["cycles", "instructions", "cache_misses"]
+  sampling_interval: 10
+  fallback_behavior: "ignore"
+
+riskchain:
+  enabled: true
+  window_seconds: 60
+  max_events: 1000
+  threshold: 75.0
+
+governance:
+  warn_threshold: 50.0
+  throttle_threshold: 75.0
+  freeze_threshold: 90.0
+
+enforcement:
+  sigstop_enabled: true
+  require_signed_resume: true
+
+eces:
+  enabled: true
+  hash_algorithm: "blake3"
+  signature_algorithm: "ed25519"
+  append_only_path: "/var/log/academiq/eces.log"
+
+tee:
+  enabled: false
+  provider: "simulation"
+  attestation_required: false
+
+forensics:
+  enabled: true
+  certificate_format: "x509"
+  evidence_retention: 30
+
+development:
+  simulation_mode: true
+  allow_mock_components: true
+  verbose_logging: true

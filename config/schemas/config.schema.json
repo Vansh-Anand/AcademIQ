@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "agent": {
+      "type": "object",
+      "properties": {
+        "model": { "type": "string" },
+        "runtime": { "type": "string" }
+      },
+      "required": ["model", "runtime"]
+    },
+    "gcd": { "type": "object" },
+    "sdn": { "type": "object" },
+    "toctou": { "type": "object" },
+    "ebpf": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "divergence": { "type": "object" },
+    "ece": { "type": "object" },
+    "hpc": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "riskchain": { "type": "object" },
+    "governance": { "type": "object" },
+    "enforcement": { "type": "object" },
+    "eces": { "type": "object" },
+    "tee": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "provider": { "type": "string" }
+      }
+    },
+    "forensics": { "type": "object" },
+    "development": {
+      "type": "object",
+      "properties": {
+        "simulation_mode": { "type": "boolean" },
+        "allow_mock_components": { "type": "boolean" },
+        "verbose_logging": { "type": "boolean" }
+      },
+      "required": ["simulation_mode"]
+    }
+  },
+  "required": ["agent", "ebpf", "hpc", "tee", "development"]
+}
