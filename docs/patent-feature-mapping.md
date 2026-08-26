@@ -4,8 +4,8 @@ This document maps planned AcademIQ implementations to required patent features.
 
 | Patent Feature | Layer | Technical Mechanism | Implementation Module | Validation | Status |
 |---|---|---|---|---|---|
-| PDA-based security-policy constrained decoding | L1 | CFG -> PDA Automaton | `l1_gcd.automaton` | Adversarial | SCAFFOLDED |
-| Token masking before softmax | L1 | Logits mutation | `l1_gcd.masking` | Benchmark | SCAFFOLDED |
+| PDA-based security-policy constrained decoding | L1 | CFG -> PDA Automaton | `l1_gcd.automaton` | Adversarial | IMPLEMENTED |
+| Token masking before softmax | L1 | Logits mutation | `l1_gcd.masking` | Benchmark | TESTED |
 | Five-pass shell normalization | L2 | AST traversal | `l2_sdn.normalizers` | Adversarial | SCAFFOLDED |
 | Host-only eBPF telemetry | L3 | libbpf / uprobe | `l3_ebpf.probes` | Integration | SCAFFOLDED |
 | Namespace-based monitoring invisibility | L3 | cgroup/ns filtering | `l3_ebpf.namespace` | Security | SCAFFOLDED |

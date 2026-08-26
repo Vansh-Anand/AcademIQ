@@ -1,0 +1,24 @@
+allowed_tools:
+  - read_file
+  - list_directory
+  - shell
+
+allowed_shell_commands:
+  - ls
+  - pwd
+  - cat
+
+forbidden_shell_commands:
+  - rm
+  - mkfs
+  - shutdown
+  - reboot
+  - chmod
+  - chown
+
+restricted_paths:
+  - /etc/shadow
+  - /etc/passwd
+  - /root
+  - /proc
+  - /sys

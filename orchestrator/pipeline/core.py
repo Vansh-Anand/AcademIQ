@@ -11,7 +11,51 @@ class AcademiqOrchestrator:
 
     def process_event(self, event) -> SecurityDecision:
         print(f"\n--- Processing Event: {event.event_type} (ID: {event.event_id}) ---")
-        print("L1 GCD -> Interface bypassed (mock)")
+        print("L1 GCD -> Initializing Compiler...")
+        from l1_gcd.compiler import YamlGCDCompiler
+        from l1_gcd.automaton import PushdownAutomaton
+        import yaml
+        
+        try:
+            with open("config/policies/gcd.yaml", "r") as f:
+                policy_dict = yaml.safe_load(f)
+            
+            compiler = YamlGCDCompiler()
+            grammar = compiler.compile_policy(policy_dict)
+            pda = PushdownAutomaton(grammar)
+            
+            # Check if the requested tool in the event is a valid prefix
+            mock_token_stream = f'{event.tool_name}("{event.arguments.get("path", "")}")'
+            print(f"L1 GCD -> Checking tool invocation: {mock_token_stream}")
+            
+            # Very basic check: does it match any valid prefix in the automaton?
+            is_valid = pda.is_valid_prefix(mock_token_stream, pda.initial_config)
+            
+            if not is_valid:
+                print("L1 GCD -> [BLOCK] Policy violation detected before generation.")
+                return SecurityDecision(
+                    decision=DecisionEnum.BLOCK,
+                    reason_codes=["GCD_POLICY_VIOLATION"],
+                    risk_score=100.0,
+                    confidence=1.0,
+                    source_layers=["L1"],
+                    related_event_ids=[event.event_id],
+                    timestamp_ns=time.time_ns()
+                )
+            else:
+                print("L1 GCD -> [ALLOW] Token sequence is legal under CFG.")
+        except Exception as e:
+            print(f"L1 GCD -> [BLOCK] Error loading/compiling policy: {e}")
+            return SecurityDecision(
+                decision=DecisionEnum.BLOCK,
+                reason_codes=["GCD_DECODING_ERROR"],
+                risk_score=100.0,
+                confidence=1.0,
+                source_layers=["L1"],
+                related_event_ids=[event.event_id],
+                timestamp_ns=time.time_ns()
+            )
+            
         print("L2 SDN -> Interface bypassed (mock)")
         print("L3 eBPF -> Synthesizing mock telemetry...")
         
