@@ -1,0 +1,21 @@
+# Semantic Policy for L2 SDN
+# Evaluated against Canonicalized AST representation
+
+allowed_executables:
+  - "read_file"
+  - "cat"
+  - "ls"
+  - "pwd"
+  
+forbidden_arguments:
+  - "--force"
+  - "-rf"
+  
+forbidden_directories:
+  - "/etc"
+  - "/var"
+  - "C:\\Windows"
+  - "C:\\System32"
+  
+allow_pipelines: false
+allow_redirection: false

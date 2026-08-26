@@ -44,6 +44,7 @@ class AcademiqOrchestrator:
                 )
             else:
                 print("L1 GCD -> [ALLOW] Token sequence is legal under CFG.")
+                
         except Exception as e:
             print(f"L1 GCD -> [BLOCK] Error loading/compiling policy: {e}")
             return SecurityDecision(
@@ -56,7 +57,48 @@ class AcademiqOrchestrator:
                 timestamp_ns=time.time_ns()
             )
             
-        print("L2 SDN -> Interface bypassed (mock)")
+        print("L2 SDN -> Initializing Interceptor...")
+        from l2_sdn.interceptor import L2Interceptor
+        from common.events.schemas import ShellCommandEvent
+        
+        try:
+            l2_interceptor = L2Interceptor()
+            # Construct a mock shell command based on L1's output
+            # For example, if L1 allowed read_file("/etc/passwd"), the underlying tool
+            # execution might correspond to a shell command like `cat /etc/passwd`
+            # For this test, we construct the shell equivalent
+            mock_shell_cmd = f"cat {event.arguments.get('path', '')}"
+            print(f"L2 SDN -> Intercepting shell payload: {mock_shell_cmd}")
+            
+            shell_event = ShellCommandEvent(
+                event_id=f"sh-{uuid.uuid4()}",
+                timestamp_ns=time.time_ns(),
+                trace_id=event.trace_id,
+                layer="L2",
+                raw_command=mock_shell_cmd
+            )
+            
+            l2_decision, locked_ast = l2_interceptor.intercept(shell_event)
+            
+            if l2_decision.decision == DecisionEnum.BLOCK:
+                print(f"L2 SDN -> [BLOCK] Semantic violation detected: {l2_decision.reason_codes[0]}")
+                # We stop the pipeline immediately. L1 ALLOW + L2 BLOCK -> NO EXECUTION.
+                return l2_decision
+            else:
+                print("L2 SDN -> [ALLOW] Semantic analysis passed.")
+                
+        except Exception as e:
+            print(f"L2 SDN -> [BLOCK] Processing Error: {e}")
+            return SecurityDecision(
+                decision=DecisionEnum.BLOCK,
+                reason_codes=["SDN_PROCESSING_ERROR"],
+                risk_score=100.0,
+                confidence=1.0,
+                source_layers=["L2"],
+                related_event_ids=[event.event_id],
+                timestamp_ns=time.time_ns()
+            )
+
         print("L3 eBPF -> Synthesizing mock telemetry...")
         
         # Simulate Divergence Event
