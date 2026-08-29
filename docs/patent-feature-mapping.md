@@ -12,6 +12,19 @@ This document maps planned AcademIQ implementations to required patent features.
 | ANSI-C normalization | L2 | Bashlex + Regex | `l2_sdn.normalizers` | Adversarial | TESTED |
 | Alias/function resolution | L2 | Dictionary lookup | `l2_sdn.normalizers` | Adversarial | TESTED |
 | Command canonicalization | L2 | AST transformation | `l2_sdn.canonicalizer` | Adversarial | TESTED |
+| L1 Context-Free Grammar Softmax Masking | 1 | IMPLEMENTED | TESTED | None | None |
+| L2 Deobfuscation Normalization Passes | 2 | IMPLEMENTED | TESTED | None | None |
+| TOCTOU-Resilient Execution Gate | 2 | IMPLEMENTED | TESTED | None | Native Linux races differ |
+| eBPF Host-Only Agent Monitoring | 3 | IMPLEMENTED | SIMULATION TESTED | Linux eBPF | Windows fallback |
+| Siamese Telemetry Embedding | 4 | IMPLEMENTED | SYNTHETIC EVAL | None | Needs live tuning |
+| Bayesian Risk Condensation | 5 | IMPLEMENTED | TESTED | None | None |
+| Neuro-Fuzzy Governance | 5 | IMPLEMENTED | TESTED | None | None |
+| Cryptographic Causal ECES Log | 6 | IMPLEMENTED | TESTED | None | None |
+| Hardware-Anchored Security Domain | 7 | IMPLEMENTED | SIMULATION TESTED | None | None |
+| TDX / SEV-SNP Integration | 7 | SCAFFOLDED | HARDWARE PENDING | Intel TDX / AMD SEV-SNP | Windows Env |
+| TPM-Backed Signatures | 7 | STUBBED | HARDWARE PENDING | TPM 2.0 | C++ CryptoAPI missing |
+| Nonce-Based Attestation Freshness | 7 | IMPLEMENTED | SIMULATION TESTED | None | None |
+| Security Measurement Manifest | 7 | IMPLEMENTED | TESTED | None | None |
 | Policy trie matching | L2 | Trie/List logic | `l2_sdn.policy.matcher` | Adversarial | TESTED |
 | TOCTOU-resistant path identity | L2 | Inode tracking | `l2_sdn.toctou.resolver` | Unit Test | TESTED |
 | Symlink replacement detection | L2 | Identity checking | `l2_sdn.toctou.verifier` | Unit Test | TESTED |

@@ -1,0 +1,80 @@
+[
+    {
+        "scenario_id": "A",
+        "name": "Safe File Read",
+        "is_attack": false,
+        "baseline_detected": false,
+        "l5_detected": false,
+        "governance_decision": "ALLOW",
+        "bayesian_probability": 0.03525782384064571,
+        "chain_score": 0.0,
+        "graph_nodes": 1,
+        "graph_edges": 0,
+        "latency_ms": 1628.2698
+    },
+    {
+        "scenario_id": "B",
+        "name": "Safe Network Activity",
+        "is_attack": false,
+        "baseline_detected": false,
+        "l5_detected": false,
+        "governance_decision": "ALLOW",
+        "bayesian_probability": 0.008870736994540536,
+        "chain_score": 0.0,
+        "graph_nodes": 1,
+        "graph_edges": 0,
+        "latency_ms": 20.8047
+    },
+    {
+        "scenario_id": "C",
+        "name": "Temporally Separated Events",
+        "is_attack": false,
+        "baseline_detected": false,
+        "l5_detected": false,
+        "governance_decision": "ALLOW",
+        "bayesian_probability": 0.1275408562374658,
+        "chain_score": 0.0,
+        "graph_nodes": 2,
+        "graph_edges": 0,
+        "latency_ms": 68.3771
+    },
+    {
+        "scenario_id": "D",
+        "name": "Multi-Step Exfiltration Chain",
+        "is_attack": true,
+        "baseline_detected": false,
+        "l5_detected": true,
+        "governance_decision": "FREEZE",
+        "bayesian_probability": 0.9970455211974526,
+        "chain_score": 0.7,
+        "graph_nodes": 3,
+        "graph_edges": 1,
+        "latency_ms": 21.0584
+    },
+    {
+        "scenario_id": "E",
+        "name": "Partial Chain",
+        "is_attack": false,
+        "baseline_detected": false,
+        "l5_detected": false,
+        "governance_decision": "WARN",
+        "bayesian_probability": 0.5101812560305139,
+        "chain_score": 0.0,
+        "graph_nodes": 2,
+        "graph_edges": 0,
+        "latency_ms": 19.8395
+    },
+    {
+        "scenario_id": "F",
+        "name": "Reversed Order Control",
+        "is_attack": false,
+        "baseline_detected": false,
+        "l5_detected": false,
+        "governance_decision": "ALLOW",
+        "bayesian_probability": 0.1275408562374658,
+        "chain_score": 0.0,
+        "graph_nodes": 2,
+        "graph_edges": 0,
+        "latency_ms": 19.1004
+    }
+]

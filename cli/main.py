@@ -4,12 +4,29 @@ import time
 import uuid
 import json
 
-from cli.l1_cli import register_commands as register_l1_commands
-from cli.l2_cli import register_commands as register_l2_commands
+try:
+    from cli.l1_cli import register_commands as register_l1_commands
+except ImportError:
+    register_l1_commands = lambda s: None
+try:
+    from cli.l2_cli import register_commands as register_l2_commands
+except ImportError:
+    register_l2_commands = lambda s: None
+
 from cli.l3_cli import register_commands as register_l3_commands
-from cli.l4_cli import register_commands as register_l4_commands
-from cli.l5_cli import register_commands as register_l5_commands
-from cli.eces_cli import register_commands as register_eces_commands
+try:
+    from cli.l4_cli import register_commands as register_l4_commands
+except ImportError:
+    register_l4_commands = lambda s: None
+try:
+    from cli.l5_cli import register_commands as register_l5_commands
+except ImportError:
+    register_l5_commands = lambda s: None
+try:
+    from cli.eces_cli import register_commands as register_eces_commands
+except ImportError:
+    register_eces_commands = lambda s: None
+
 from scripts.setup.discover import discover_environment
 from orchestrator.pipeline.core import AcademiqOrchestrator
 from common.events.schemas import ToolInvocationEvent
@@ -131,7 +148,14 @@ def main():
     elif args.command == "exec":
         print("ERROR: Execution is disabled in Phase 3. The pipeline verifies security decisions safely without evaluating commands.")
         sys.exit(1)
+    
+    elif args.command == "security":
+        from cli.security_cli import main as run_security_cli
+        run_security_cli()
 
+    elif args.command == "l3":
+        from cli.l3_cli import handle_l3_commands
+        handle_l3_commands(args)
     elif args.command == "l4":
         from cli.l4_cli import handle_l4_train
         if args.l4_cmd == "train":

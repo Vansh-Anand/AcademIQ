@@ -1,6 +1,35 @@
-# AcademIQ Architecture
+# AcademIQ Architecture (Final)
 
-AcademIQ implements a zero-trust runtime interceptor for Agentic AI via a multi-layered security pipeline.
+AcademIQ enforces Zero-Trust security across 7 distinct layers:
+
+```mermaid
+graph TD
+    Agent[AI Agent / LLM]
+    L1[L1: Grammar-Constrained Decoding]
+    L2[L2: Semantic Defense Network]
+    L3[L3: eBPF Telemetry]
+    L4[L4: Divergence Engine]
+    L5[L5: RiskChain Governance]
+    L6[L6: ECES Causal Log]
+    L7[L7: Hardware TEE / Attestation]
+
+    Agent --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> L6
+    L6 --> L7
+```
+
+## Layer Definitions
+- **L1**: Syntactic Grammar Constrained Decoding (Softmax Masking).
+- **L2**: Shell Deobfuscation Normalizer + TOCTOU Resilience.
+- **L3**: eBPF Kernel Call Tracing (Host-level).
+- **L4**: Behavioral Divergence (Siamese / Isolation Forest).
+- **L5**: Bayesian Risk + Fuzzy Governance (Freeze/Throttle).
+- **L6**: ECES (Evidentiary Security) Cryptographic Hash Chains.
+- **L7**: Hardware Anchored Trust (TDX/SEV-SNP/TPM + Nonce Attestation).
 
 ## L1: Grammar-Constrained Decoding (GCD)
 **Goal:** Prevent dangerous LLM output structurally during text generation.

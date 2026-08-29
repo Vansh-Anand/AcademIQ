@@ -1,0 +1,10 @@
+drift_detection:
+  enabled: true
+  monitored_signal: divergence_score
+  cusum:
+    reference_value: 0.05
+    decision_threshold: 1.5
+  recalibration:
+    minimum_admitted_samples: 50
+    percentile: 99
+    cooldown_seconds: 3600

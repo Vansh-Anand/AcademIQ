@@ -1,0 +1,4 @@
+allowed_tools:
+  - web_search
+  - read_file
+allowed_shell_commands: []

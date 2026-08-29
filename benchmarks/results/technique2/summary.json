@@ -1,0 +1,47 @@
+[
+    {
+        "scenario_id": "EXP-T2-A",
+        "name": "Full Exfiltration",
+        "has_path": true,
+        "causally_valid": true,
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "risk_score": 1.9
+    },
+    {
+        "scenario_id": "EXP-T2-B",
+        "name": "Competing Paths",
+        "has_path": true,
+        "causally_valid": true,
+        "signature": "L2_OBFUSCATION->L3_PROCESS_CREATE->L3_PTRACE->L4_DIVERGENCE_HIGH",
+        "fingerprint": "5e287ec7fa052641fd3fce64422982cfc6da71102b4bbd8e3cb3f8eece359915",
+        "risk_score": 2.3000000000000003
+    },
+    {
+        "scenario_id": "EXP-T2-C",
+        "name": "Reversed Causal Order",
+        "has_path": false,
+        "causally_valid": false,
+        "signature": null,
+        "fingerprint": null,
+        "risk_score": 0.0
+    },
+    {
+        "scenario_id": "EXP-T2-D",
+        "name": "Partial Chain",
+        "has_path": true,
+        "causally_valid": true,
+        "signature": "L3_FILE_RESTRICTED->L3_PROCESS_CREATE",
+        "fingerprint": "903b948cc37816550724cebbba9290b5c84c09ccc5a4d60628a9c9563aa508b3",
+        "risk_score": 0.5
+    },
+    {
+        "scenario_id": "EXP-T2-E",
+        "name": "Structurally Equivalent",
+        "has_path": true,
+        "causally_valid": true,
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "risk_score": 1.9
+    }
+]

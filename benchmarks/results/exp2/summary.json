@@ -1,0 +1,22 @@
+{
+    "experiment": "EXP-2",
+    "total_payloads": 19,
+    "total_malicious": 15,
+    "baseline": {
+        "detections": 12,
+        "misses": 3,
+        "attack_success_rate": 20.0
+    },
+    "l2_sdn": {
+        "detections": 14,
+        "misses": 1,
+        "attack_success_rate": 6.666666666666667,
+        "detection_rate": 93.33333333333333,
+        "false_negatives": 1
+    },
+    "latency_ms": {
+        "mean": 13.00134210526316,
+        "median": 15.6707,
+        "p95": 17.5884
+    }
+}

@@ -262,3 +262,27 @@ class TEEAttestationEvent(BaseEvent):
     provider_name: str
     quote_data: str
     verified: bool
+
+from enum import Enum
+
+class DetectionState(str, Enum):
+    NEW_PATTERN = "NEW_PATTERN"
+    REPEATED_PATTERN = "REPEATED_PATTERN"
+    COORDINATED_PATTERN = "COORDINATED_PATTERN"
+    LEGITIMATE_REPEAT = "LEGITIMATE_REPEAT"
+    REPLAY_ALERT = "REPLAY_ALERT"
+
+class CrossSessionEvent(BaseEvent):
+    event_type: str = Field(default="CrossSessionReplay")
+    schema_version: str = "1.0"
+    current_session_id: str
+    matching_session_ids: List[str]
+    attack_chain_fingerprint: str
+    attack_chain_signature: str
+    detection_state: str
+    repeat_count: int
+    temporal_window_seconds: int
+    path_risk_score: float
+    bayesian_probability: float
+    simulation: bool = False
+    parent_event_id: Optional[str] = None

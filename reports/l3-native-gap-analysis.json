@@ -1,0 +1,40 @@
+{
+  "status": "scaffolded",
+  "files": [
+    "execve.bpf.c",
+    "events.h",
+    "Makefile"
+  ],
+  "implemented_tracepoints": [
+    "sys_enter_execve"
+  ],
+  "missing_tracepoints": [
+    "sys_enter_openat",
+    "sys_enter_socket",
+    "sys_enter_connect",
+    "sys_enter_clone",
+    "sys_enter_ptrace"
+  ],
+  "maps": {
+    "ring_buffer": {
+      "type": "BPF_MAP_TYPE_RINGBUF",
+      "size_kb": 256
+    },
+    "cgroup_filter": {
+      "type": "BPF_MAP_TYPE_HASH"
+    }
+  },
+  "python_userspace": {
+    "native_collector": "stubbed (NotImplementedError)",
+    "simulated_collector": "implemented (JSON trace based)",
+    "map_updates": "missing"
+  },
+  "enforcement": "userspace_os_kill",
+  "build_system": "clang_libbpf",
+  "dependencies_required": [
+    "clang",
+    "llvm",
+    "bpftool",
+    "libbpf/bcc"
+  ]
+}

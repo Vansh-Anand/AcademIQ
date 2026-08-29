@@ -1,0 +1,31 @@
+{
+    "experiment": "EXP-3",
+    "total_scenarios": 6,
+    "attack_scenarios": 1,
+    "safe_scenarios": 5,
+    "baseline": {
+        "detections": 0,
+        "misses": 1,
+        "attack_success_rate": 100.0
+    },
+    "l5_riskchain": {
+        "detections": 1,
+        "misses": 0,
+        "attack_success_rate": 0.0,
+        "detection_rate": 100.0,
+        "false_negatives": 0,
+        "false_positives": 0
+    },
+    "governance_distribution": {
+        "ALLOW": 4,
+        "WARN": 1,
+        "THROTTLE": 0,
+        "FREEZE": 1,
+        "BLOCK": 0
+    },
+    "latency_ms": {
+        "mean": 296.24165,
+        "median": 20.93155,
+        "p95": 2642.200055
+    }
+}

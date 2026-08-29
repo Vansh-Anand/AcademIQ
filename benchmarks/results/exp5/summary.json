@@ -1,0 +1,23 @@
+{
+    "experiment": "EXP-5",
+    "name": "Synthetic Unlabeled Behavioral Divergence Detection",
+    "training_trajectories": 1000,
+    "benign_holdout": 200,
+    "anomalous_holdout": 200,
+    "baseline_detection_rate": 0.0,
+    "academiq_detection_rate": 100.0,
+    "baseline_asr": 100.0,
+    "protected_asr": 0.0,
+    "true_positives": 200,
+    "true_negatives": 199,
+    "false_positives": 1,
+    "false_negatives": 0,
+    "precision": 0.9950248756218906,
+    "recall": 1.0,
+    "f1_score": 0.9975062344139651,
+    "benign_mean_divergence": 0.483617186994537,
+    "anomalous_mean_divergence": 0.6864608783753968,
+    "mean_latency_ms": 0.03043775,
+    "median_latency_ms": 0.03043775,
+    "p95_latency_ms": 0.03043775
+}

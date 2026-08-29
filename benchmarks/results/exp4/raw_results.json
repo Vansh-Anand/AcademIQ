@@ -1,0 +1,83 @@
+{
+    "baseline_latency_ns": 359500,
+    "academiq_latency_ns": 29326800,
+    "baseline_blocked_events": [
+        {
+            "event_id": "evt-4",
+            "timestamp_ns": 2000000100,
+            "layer": "L3",
+            "trace_id": "trc-1",
+            "event_type": "Syscall",
+            "syscall_name": "ptrace",
+            "pid": 1002,
+            "cgroup_id": 1000,
+            "executable": "/usr/bin/python3",
+            "monotonic_timestamp_ns": 2000000100,
+            "telemetry_source": "SIMULATION"
+        },
+        {
+            "event_id": "evt-6",
+            "timestamp_ns": 3000000100,
+            "layer": "L3",
+            "trace_id": "trc-1",
+            "event_type": "Syscall",
+            "syscall_name": "ptrace",
+            "pid": 2001,
+            "cgroup_id": 9999,
+            "executable": "/usr/bin/strace",
+            "monotonic_timestamp_ns": 3000000100,
+            "telemetry_source": "SIMULATION"
+        }
+    ],
+    "academiq_result": {
+        "scenario_id": "EXP-4-PTRACE",
+        "start_timestamp_ns": 1034568891955100,
+        "end_timestamp_ns": 1034568921281900,
+        "total_latency_ns": 29326800,
+        "attack_blocked": false,
+        "attack_success": false,
+        "stopping_layer": null,
+        "layer_outcomes": {
+            "L1": {
+                "decision": "NOT_EXECUTED",
+                "risk_score": null,
+                "confidence": null,
+                "reason_codes": [],
+                "latency_ns": null
+            },
+            "L2": {
+                "decision": "NOT_EXECUTED",
+                "risk_score": null,
+                "confidence": null,
+                "reason_codes": [],
+                "latency_ns": null
+            },
+            "L3": {
+                "decision": "BLOCK",
+                "risk_score": null,
+                "confidence": null,
+                "reason_codes": [],
+                "latency_ns": null
+            },
+            "L4": {
+                "decision": "UNAVAILABLE",
+                "risk_score": null,
+                "confidence": null,
+                "reason_codes": [],
+                "latency_ns": null
+            },
+            "L5": {
+                "decision": "UNAVAILABLE",
+                "risk_score": null,
+                "confidence": null,
+                "reason_codes": [],
+                "latency_ns": null
+            }
+        },
+        "l3_events_processed": 4,
+        "l3_anomalies_detected": 1,
+        "errors": [],
+        "evidence_reference": "5bb707c5-ebbf-42c8-802d-60b90320f0ae",
+        "metadata": {}
+    }
+}

@@ -75,6 +75,11 @@ class ExecutionCorrelationManager:
             # Any connect syscall is considered unauthorized if not explicitly whitelisted.
             return False, UnexpectedExecutionEvent(agent_id=agent_id, syscall_event=event, reason=f"Unauthorized network activity to {event.destination_ip}:{event.destination_port}")
             
+        # If we see ptrace
+        if event.syscall_name == "ptrace":
+            # Ptrace from a monitored agent is heavily scrutinized as potential privilege escalation/process injection
+            return False, UnexpectedExecutionEvent(agent_id=agent_id, syscall_event=event, reason="Unauthorized process manipulation (ptrace attempt detected)")
+            
         return True, None
         
     def _expire_pending_actions(self):

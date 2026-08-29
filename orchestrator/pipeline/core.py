@@ -10,7 +10,8 @@ from l6_eces.chain.writer import EvidenceChainWriter
 from l6_eces.redaction.policy import EvidenceRedactionPolicy
 
 class AcademiqOrchestrator:
-    def __init__(self, mode: str = "simulation"):
+    def __init__(self, mode: str = "simulation", l3_collector: 'typing.Any' = None):
+        import typing
         self.mode = mode
         self.session_id = str(uuid.uuid4())
         
@@ -22,7 +23,25 @@ class AcademiqOrchestrator:
         self.eces_writer = EvidenceChainWriter(self.eces_store, self.eces_hasher, self.eces_signer)
         self.eces_redactor = EvidenceRedactionPolicy(mode="STANDARD")
         
+        # Injected dependencies
+        self.l3_collector = l3_collector
+        self.l3_events_processed = []
+        self.l3_anomalies = []
+        self.correlation_manager = None
+        
+        if self.l3_collector and hasattr(self.l3_collector, "register_callback"):
+            from l3_ebpf.userspace.correlation import ExecutionCorrelationManager
+            self.correlation_manager = ExecutionCorrelationManager()
+            self.l3_collector.register_callback(self._on_l3_event)
+        
         print(f"[Orchestrator] Initialized in {self.mode.upper()} mode. Session: {self.session_id}")
+
+    def _on_l3_event(self, event):
+        self.l3_events_processed.append(event)
+        if self.correlation_manager:
+            correlated, anomaly = self.correlation_manager.correlate_syscall(event)
+            if not correlated:
+                self.l3_anomalies.append(anomaly)
 
     def process_event(self, event) -> SecurityDecision:
         print(f"\n--- Processing Event: {event.event_type} (ID: {event.event_id}) ---")
@@ -73,11 +92,11 @@ class AcademiqOrchestrator:
             )
             
         print("L2 SDN -> Initializing Interceptor...")
-        from l2_sdn.interceptor import L2Interceptor
+        from l2_sdn.interceptor import DevelopmentShellInterceptor
         from common.events.schemas import ShellCommandEvent
         
         try:
-            l2_interceptor = L2Interceptor()
+            l2_interceptor = DevelopmentShellInterceptor()
             # Construct a mock shell command based on L1's output
             # For example, if L1 allowed read_file("/etc/passwd"), the underlying tool
             # execution might correspond to a shell command like `cat /etc/passwd`
@@ -104,10 +123,18 @@ class AcademiqOrchestrator:
             
             l2_decision, locked_ast = l2_interceptor.intercept(shell_event)
             
-            if l2_decision.decision == DecisionEnum.BLOCK:
-                print(f"L2 SDN -> [BLOCK] Semantic violation detected: {l2_decision.reason_codes[0]}")
+            if l2_decision == "BLOCK":
+                print(f"L2 SDN -> [BLOCK] Semantic violation detected: {locked_ast.matched_rule}")
                 # We stop the pipeline immediately. L1 ALLOW + L2 BLOCK -> NO EXECUTION.
-                return l2_decision
+                return SecurityDecision(
+                    decision=DecisionEnum.BLOCK,
+                    reason_codes=[locked_ast.matched_rule or "SDN_BLOCK"],
+                    risk_score=100.0,
+                    confidence=1.0,
+                    source_layers=["L1", "L2"],
+                    related_event_ids=[event.event_id, shell_event.event_id],
+                    timestamp_ns=time.time_ns()
+                )
             else:
                 print("L2 SDN -> [ALLOW] Semantic analysis passed.")
                 
@@ -123,19 +150,52 @@ class AcademiqOrchestrator:
                 timestamp_ns=time.time_ns()
             )
 
+        if self.l3_collector:
+            print("L3 eBPF -> Using injected collector for telemetry replay. Skipping mock pipeline.")
+            # For replay scenarios, L4 and L5 are currently unavailable in the native stream
+            decision = SecurityDecision(
+                decision=DecisionEnum.ALLOW,
+                reason_codes=[],
+                risk_score=0.0,
+                confidence=1.0,
+                source_layers=["L1", "L2"],
+                related_event_ids=[event.event_id, shell_event.event_id],
+                timestamp_ns=time.time_ns()
+            )
+            print(f"--- Event Processing Complete. Final Decision: {decision.decision.value} ---")
+            return decision
+
         print("L3 eBPF -> Synthesizing mock telemetry...")
         
         # Simulate Divergence Event
+        from common.events.schemas import DivergenceResult, WindowQuality
+        
+        mock_quality = WindowQuality(
+            event_count=100, expected_count=100, dropped_events=0,
+            ordering_valid=True, timestamp_quality=1.0, hpc_coverage=1.0, quality_score=1.0
+        )
+        mock_result = DivergenceResult(
+            score=0.1, confidence=0.99, siamese_score=0.1, isolation_score=0.1, ece_threshold=0.8,
+            above_threshold=False, window_quality=mock_quality, hpc_available=True,
+            model_version="1.0", ece_version="1.0", reason_codes=[]
+        )
+        
         div_event = DivergenceEvent(
             event_id=f"div-{uuid.uuid4()}",
             timestamp_ns=time.time_ns(),
             layer="L4",
             trace_id=event.trace_id,
             simulation=(self.mode == "simulation"),
-            divergence_score=0.1,
-            features_analyzed=15
+            agent_id="test-agent",
+            session_id=self.session_id,
+            window_id="win-1",
+            window_start=time.time_ns(),
+            window_end=time.time_ns(),
+            syscall_count=15,
+            result=mock_result,
+            decision="ALLOW"
         )
-        print(f"L4 Divergence -> Score: {div_event.divergence_score}")
+        print(f"L4 Divergence -> Score: {div_event.result.score}")
 
         print("L5 RiskChain -> Generating Decision...")
         
@@ -161,6 +221,7 @@ class AcademiqOrchestrator:
         # We can mock a RiskChainEvent or EnforcementEvent wrapping the decision
         from common.events.schemas import EnforcementEvent
         enf_event = EnforcementEvent(
+            event_type="Enforcement",
             event_id=f"enf-{uuid.uuid4()}",
             timestamp_ns=time.time_ns(),
             trace_id=event.trace_id,

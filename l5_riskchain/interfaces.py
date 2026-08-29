@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any
+from typing import List, Any, Dict, Optional
 from common.schemas.security import SecurityDecision
 
 class RiskChainGraph(ABC):
@@ -35,6 +35,11 @@ class ECESRecorder(ABC):
 class ECESVerifier(ABC):
     @abstractmethod
     def verify_chain(self) -> bool:
+        pass
+
+class RiskPathAnalyzer(ABC):
+    @abstractmethod
+    def analyze(self, graph: RiskChainGraph) -> Optional[Dict[str, Any]]:
         pass
 
 class ForensicExporter(ABC):

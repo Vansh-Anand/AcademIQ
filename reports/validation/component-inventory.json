@@ -1,0 +1,79 @@
+[
+  {
+    "component": "L1 GCD",
+    "path": "l1_gcd/",
+    "purpose": "Softmax masking of generated tokens",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "UNIT TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT TESTED",
+    "hardware_status": "NOT TESTED",
+    "limitations": "Vocabulary size overhead."
+  },
+  {
+    "component": "L2 SDN",
+    "path": "l2_sdn/",
+    "purpose": "Shell Deobfuscation and Normalization",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT TESTED",
+    "hardware_status": "NOT TESTED",
+    "limitations": "TOCTOU races differ between Windows and Linux."
+  },
+  {
+    "component": "L3 eBPF",
+    "path": "l3_ebpf/",
+    "purpose": "Host-only Kernel Telemetry",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT AVAILABLE ON CURRENT HOST",
+    "hardware_status": "NOT TESTED",
+    "limitations": "Windows host cannot execute bpf syscalls."
+  },
+  {
+    "component": "L4 Divergence",
+    "path": "l4_divergence/",
+    "purpose": "Behavioral detection via Autoencoders/IsolationForest",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT TESTED",
+    "hardware_status": "NOT TESTED",
+    "limitations": "Trained only on synthetic data; needs live production calibration."
+  },
+  {
+    "component": "L5 RiskChain",
+    "path": "l5_riskchain/",
+    "purpose": "Bayesian state and Neuro-Fuzzy Governance",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT TESTED",
+    "hardware_status": "NOT TESTED",
+    "limitations": "Fuzzy rules are expert-configured heuristic rules, lacking empirical validation."
+  },
+  {
+    "component": "ECES",
+    "path": "l6_eces/",
+    "purpose": "Evidentiary Security Hash Chain",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT TESTED",
+    "hardware_status": "NOT TESTED",
+    "limitations": "Hardware-backed signing keys require OS-specific APIs (stubbed on Windows)."
+  },
+  {
+    "component": "L7 Trust",
+    "path": "l7_trust/",
+    "purpose": "Hardware-anchored Attestation & TEE",
+    "implementation_status": "IMPLEMENTED",
+    "test_status": "INTEGRATION TESTED",
+    "simulation_status": "VALIDATED",
+    "native_status": "NOT AVAILABLE ON CURRENT HOST",
+    "hardware_status": "HARDWARE VALIDATION PENDING",
+    "limitations": "Intel TDX / AMD SEV-SNP physically absent on current machine."
+  }
+]

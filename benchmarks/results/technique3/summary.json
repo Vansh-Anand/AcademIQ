@@ -1,0 +1,90 @@
+{
+    "First Observation": {
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "current_session_id": "session_A",
+        "matching_session_ids": [],
+        "detection_state": "NEW_PATTERN",
+        "repeat_count": 1,
+        "is_high_risk": true,
+        "first_seen_ns": 1000000000,
+        "last_seen_ns": 1000000000
+    },
+    "Exact Structural Replay": {
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "current_session_id": "session_B",
+        "matching_session_ids": [
+            "session_A"
+        ],
+        "detection_state": "REPLAY_ALERT",
+        "repeat_count": 2,
+        "is_high_risk": true,
+        "first_seen_ns": 1000000000,
+        "last_seen_ns": 61000000000
+    },
+    "Coordinated Multi-Session": {
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "current_session_id": "session_C",
+        "matching_session_ids": [
+            "session_A",
+            "session_B"
+        ],
+        "detection_state": "COORDINATED_PATTERN",
+        "repeat_count": 3,
+        "is_high_risk": true,
+        "first_seen_ns": 1000000000,
+        "last_seen_ns": 121000000000
+    },
+    "Legitimate Workflow (1)": {
+        "fingerprint": "99875564e5f0dfc67bca200e763c219b589bc91d5f5ad67e27106f0052acfc73",
+        "signature": "L3_FILE_READ->L3_PROCESS_CREATE->L3_NETWORK",
+        "current_session_id": "session_D1",
+        "matching_session_ids": [],
+        "detection_state": "NEW_PATTERN",
+        "repeat_count": 1,
+        "is_high_risk": false,
+        "first_seen_ns": 2000000000,
+        "last_seen_ns": 2000000000
+    },
+    "Legitimate Workflow (2)": {
+        "fingerprint": "99875564e5f0dfc67bca200e763c219b589bc91d5f5ad67e27106f0052acfc73",
+        "signature": "L3_FILE_READ->L3_PROCESS_CREATE->L3_NETWORK",
+        "current_session_id": "session_D2",
+        "matching_session_ids": [
+            "session_D1"
+        ],
+        "detection_state": "LEGITIMATE_REPEAT",
+        "repeat_count": 2,
+        "is_high_risk": false,
+        "first_seen_ns": 2000000000,
+        "last_seen_ns": 62000000000
+    },
+    "Similar But Different": {
+        "fingerprint": "a5a31908dc4cd586a3d7109ea542d5e0e46434fd8bea062e63527628240450e3",
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L3_PRIVILEGE_ESCALATION",
+        "current_session_id": "session_E",
+        "matching_session_ids": [],
+        "detection_state": "NEW_PATTERN",
+        "repeat_count": 1,
+        "is_high_risk": true,
+        "first_seen_ns": 181000000000,
+        "last_seen_ns": 181000000000
+    },
+    "Outside Temporal Window": {
+        "fingerprint": "b15e1a1a3ff8b4fc84b88e21ea86890cc54d4a43d48a768b157ec48b18371a1b",
+        "signature": "L3_FILE_RESTRICTED->L3_NETWORK->L4_DIVERGENCE_HIGH",
+        "current_session_id": "session_F",
+        "matching_session_ids": [
+            "session_A",
+            "session_B",
+            "session_C"
+        ],
+        "detection_state": "REPLAY_ALERT",
+        "repeat_count": 4,
+        "is_high_risk": true,
+        "first_seen_ns": 1000000000,
+        "last_seen_ns": 7201000000000
+    }
+}

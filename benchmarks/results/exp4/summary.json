@@ -1,0 +1,16 @@
+{
+    "experiment": "EXP-4",
+    "name": "Ptrace-Like Process Manipulation Detection",
+    "total_scenarios": 3,
+    "malicious_scenarios": 1,
+    "safe_controls": 2,
+    "baseline_detection_rate": 100.0,
+    "academiq_detection_rate": 100.0,
+    "baseline_asr": 0.0,
+    "protected_asr": 0.0,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "mean_latency_ms": 29.3268,
+    "median_latency_ms": 29.3268,
+    "p95_latency_ms": 29.3268
+}

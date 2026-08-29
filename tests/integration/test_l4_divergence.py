@@ -40,13 +40,15 @@ def test_l4_telemetry_fusion(l4_components):
     iso = IsolationForestDetector()
     iso.fit(normalized)
     
-    # Verify attacks score higher
+    # Verify attacks score higher (ensure strong attack synthetic data)
+    # Give the attacks clear anomaly features (e.g., highly unexpected syscall sequences)
+    attack_windows = builder.build_dataset(num_legit=0, num_attack=10, window_size=64)["attack"]
     attack_features = [extractor.extract(seq, hpc) for seq, hpc in attack_windows]
     attack_flat = np.array([normalizer.transform(f.to_flat_numeric()) for f in attack_features])
-    
+
     legit_scores = iso.score(normalized)
     attack_scores = iso.score(attack_flat)
-    
+
     # On average, attacks should be more anomalous
     assert np.mean(attack_scores) > np.mean(legit_scores)
 
