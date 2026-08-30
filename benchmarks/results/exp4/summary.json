@@ -10,7 +10,7 @@
     "protected_asr": 0.0,
     "false_positives": 0,
     "false_negatives": 0,
-    "mean_latency_ms": 29.3268,
-    "median_latency_ms": 29.3268,
-    "p95_latency_ms": 29.3268
+    "mean_latency_ms": 35.1779,
+    "median_latency_ms": 35.1779,
+    "p95_latency_ms": 35.1779
 }

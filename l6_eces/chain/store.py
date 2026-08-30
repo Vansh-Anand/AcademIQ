@@ -4,7 +4,28 @@ import threading
 from typing import Optional, List, Dict, Any
 from l6_eces.chain.schemas import EvidenceRecord, GenesisRecord, ChainHead
 
-class EvidenceStore:
+from abc import ABC, abstractmethod
+
+class EvidenceStore(ABC):
+    """Abstract Base Class for append-only evidence stores."""
+    
+    @abstractmethod
+    def append_genesis(self, record: GenesisRecord):
+        pass
+
+    @abstractmethod
+    def append(self, record: EvidenceRecord):
+        pass
+
+    @abstractmethod
+    def read_all(self) -> List[Dict[str, Any]]:
+        pass
+
+    @abstractmethod
+    def get_chain_head(self) -> Optional[ChainHead]:
+        pass
+
+class JsonlEvidenceStore(EvidenceStore):
     """Append-only evidence store using JSON Lines for simple integrity."""
     def __init__(self, directory: str = ".data/evidence"):
         self.directory = directory
@@ -18,7 +39,6 @@ class EvidenceStore:
                 raise RuntimeError("Cannot append genesis to non-empty chain")
             
             with open(self.chain_file, "a", encoding="utf-8") as f:
-                # Prefix with G to distinguish easily
                 f.write("G|" + record.model_dump_json() + "\n")
                 f.flush()
                 os.fsync(f.fileno())
@@ -84,7 +104,7 @@ class EvidenceRecoveryManager:
         self.store = store
         
     def recover(self) -> Optional[ChainHead]:
-        # A true recovery manager would scan the JSONL, verify hashes sequentially,
+        # A true recovery manager would scan sequentially, verify hashes,
         # and truncate at the first invalid hash. 
-        # For prototype, we assume JSONL lines are atomic because of fsync.
+        # For prototype, we assume underlying store is consistent up to head.
         return self.store.get_chain_head()

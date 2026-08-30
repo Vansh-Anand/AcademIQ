@@ -32,8 +32,15 @@ class GCDLogitsProcessor(LogitsProcessor):
     Integrates L1 GCD (PushdownAutomaton) directly into HuggingFace generation loop.
     Masks out any token that would cause the generated text to violate the CFG.
     """
-    def __init__(self, automaton: PushdownAutomaton, tokenizer: PreTrainedTokenizer, prompt_len: int):
-        self.automaton = automaton
+    def __init__(self, automaton: PushdownAutomaton = None, tokenizer: PreTrainedTokenizer = None, prompt_len: int = 0, hot_reload_manager = None):
+        if hot_reload_manager:
+            self.active_policy = hot_reload_manager.get_active_policy()
+            self.automaton = self.active_policy.automaton
+        elif automaton:
+            self.automaton = automaton
+        else:
+            raise ValueError("Must provide either automaton or hot_reload_manager")
+            
         self.tokenizer = tokenizer
         self.prompt_len = prompt_len
         self.config = self.automaton.initial_config

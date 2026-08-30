@@ -275,6 +275,7 @@ class DetectionState(str, Enum):
 class CrossSessionEvent(BaseEvent):
     event_type: str = Field(default="CrossSessionReplay")
     schema_version: str = "1.0"
+    layer: str = Field(default="L5_CROSS_SESSION")
     current_session_id: str
     matching_session_ids: List[str]
     attack_chain_fingerprint: str

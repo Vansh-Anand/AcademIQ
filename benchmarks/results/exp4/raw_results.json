@@ -1,6 +1,6 @@
 {
-    "baseline_latency_ns": 359500,
-    "academiq_latency_ns": 29326800,
+    "baseline_latency_ns": 754400,
+    "academiq_latency_ns": 35177900,
     "baseline_blocked_events": [
         {
             "event_id": "evt-4",
@@ -31,9 +31,9 @@
     ],
     "academiq_result": {
         "scenario_id": "EXP-4-PTRACE",
-        "start_timestamp_ns": 1034568891955100,
-        "end_timestamp_ns": 1034568921281900,
-        "total_latency_ns": 29326800,
+        "start_timestamp_ns": 1044503092303800,
+        "end_timestamp_ns": 1044503127481700,
+        "total_latency_ns": 35177900,
         "attack_blocked": false,
         "attack_success": false,
         "stopping_layer": null,
@@ -77,7 +77,7 @@
         "l3_events_processed": 4,
         "l3_anomalies_detected": 1,
         "errors": [],
-        "evidence_reference": "5bb707c5-ebbf-42c8-802d-60b90320f0ae",
+        "evidence_reference": "b0972929-bb1c-4165-a505-212ce5f7937b",
         "metadata": {}
     }
 }

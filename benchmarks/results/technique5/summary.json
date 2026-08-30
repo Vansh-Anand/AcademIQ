@@ -1,0 +1,46 @@
+{
+    "technique": "sdn_l3_cross_layer_false_positive_reduction",
+    "raw_l3_only": {
+        "total": 6,
+        "tp": 0,
+        "tn": 2,
+        "fp": 2,
+        "fn": 2,
+        "false_positive_rate": 0.5,
+        "detection_rate": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+    },
+    "sdn_normalized_l3": {
+        "total": 6,
+        "tp": 2,
+        "tn": 4,
+        "fp": 0,
+        "fn": 0,
+        "false_positive_rate": 0.0,
+        "detection_rate": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+    },
+    "false_positive_reduction": {
+        "absolute": 0.5,
+        "percentage": 100.0
+    },
+    "latency": {
+        "raw": {
+            "mean": 0.03648333333333333,
+            "median": 0.03355
+        },
+        "normalized": {
+            "mean": 0.02745,
+            "median": 0.0373
+        }
+    },
+    "limitations": [
+        "Simulation-based L3 telemetry",
+        "Limited corpus size (6 deterministic scenarios)",
+        "Absence of live eBPF matching"
+    ]
+}

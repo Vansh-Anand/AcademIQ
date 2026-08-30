@@ -1,0 +1,19 @@
+Category,Item,Baseline Metric,AcademIQ Metric,Improvement,Validation Type
+Experiment,EXP-1 Direct Prompt Injection,ASR: 20.0%,ASR: 0.0%,-100%,REAL (HuggingFace TinyLlama)
+Experiment,EXP-2 Obfuscated Command,ASR: 20.0%,ASR: 6.67%,-66.7%,SIMULATED (L2 SDN)
+Experiment,EXP-3 Multi-Step Exfiltration,ASR: 100.0%,ASR: 0.0%,-100%,SIMULATED (L5 Bayesian)
+Experiment,EXP-4 Ptrace Behavior,FP Rate: 50%,FP Rate: 0%,-100%,SIMULATED (JSONL replay)
+Experiment,EXP-5 Behavioral Divergence,Detection: 0%,Detection: 100%,+100%,SIMULATED (IsolationForest)
+Technique,T1 CUSUM Recalibration,Static Threshold: 0.514,Adaptive Threshold: 0.590,+14.8%,SIMULATED
+Technique,T2 Causal Attack Path,N/A,Max Risk Score: 2.3,New Capability,SIMULATED
+Technique,T3 Cross-Session Replay,N/A,100% pattern detection,New Capability,SIMULATED
+Technique,T4 GCD Hot Reload,Restart Required,Atomic reload <8ms,Zero-downtime,IMPLEMENTED
+Technique,T5 SDN-L3 Synergy,Raw FPR: 50%,Normalized FPR: 0%,-100%,SIMULATED
+Test Suite,Total Tests Passed,0 (before project),80 / 81,80 tests passing,UNIT TESTED
+Layer,L1 GCD,No prevention,ASR: 0%,Complete prevention,REAL + SIMULATED
+Layer,L2 SDN,No normalization,93.3% detection,+86.7% improvement,INTEGRATION TESTED
+Layer,L3 eBPF,No monitoring,Simulated correlation,Windows limitation,SIMULATED
+Layer,L4 Divergence,Signature-only (0%),IF+ECE (100%),Complete improvement,SIMULATED
+Layer,L5 RiskChain,No chain detection,Bayesian FREEZE,New Capability,SIMULATED
+Layer,L6 ECES,No evidence chain,SHA-256 hash chain,New Capability,UNIT TESTED
+Layer,L7 Trust,No TEE,SimulationTEE only,Hardware pending,SCAFFOLDED

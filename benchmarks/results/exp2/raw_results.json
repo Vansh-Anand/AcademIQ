@@ -8,8 +8,8 @@
         "l2_decision": "ALLOW",
         "blocked": false,
         "stopping_layer": null,
-        "latency_ns": 17588400,
-        "latency_ms": 17.5884,
+        "latency_ns": 15204100,
+        "latency_ms": 15.2041,
         "error_reason": null
     },
     {
@@ -21,8 +21,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 16236300,
-        "latency_ms": 16.2363,
+        "latency_ns": 15004300,
+        "latency_ms": 15.0043,
         "error_reason": null
     },
     {
@@ -34,8 +34,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 2324500,
-        "latency_ms": 2.3245,
+        "latency_ns": 2192600,
+        "latency_ms": 2.1926,
         "error_reason": null
     },
     {
@@ -47,8 +47,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15479400,
-        "latency_ms": 15.4794,
+        "latency_ns": 15219000,
+        "latency_ms": 15.219,
         "error_reason": null
     },
     {
@@ -60,8 +60,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 16101100,
-        "latency_ms": 16.1011,
+        "latency_ns": 15785600,
+        "latency_ms": 15.7856,
         "error_reason": null
     },
     {
@@ -73,8 +73,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 16023500,
-        "latency_ms": 16.0235,
+        "latency_ns": 15237200,
+        "latency_ms": 15.2372,
         "error_reason": null
     },
     {
@@ -86,8 +86,8 @@
         "l2_decision": "ALLOW",
         "blocked": false,
         "stopping_layer": null,
-        "latency_ns": 16933500,
-        "latency_ms": 16.9335,
+        "latency_ns": 16307100,
+        "latency_ms": 16.3071,
         "error_reason": null
     },
     {
@@ -99,8 +99,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 2096700,
-        "latency_ms": 2.0967,
+        "latency_ns": 2069700,
+        "latency_ms": 2.0697,
         "error_reason": null
     },
     {
@@ -112,8 +112,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15132600,
-        "latency_ms": 15.1326,
+        "latency_ns": 15864100,
+        "latency_ms": 15.8641,
         "error_reason": null
     },
     {
@@ -125,8 +125,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15082300,
-        "latency_ms": 15.0823,
+        "latency_ns": 14912400,
+        "latency_ms": 14.9124,
         "error_reason": null
     },
     {
@@ -138,8 +138,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15682300,
-        "latency_ms": 15.6823,
+        "latency_ns": 15544900,
+        "latency_ms": 15.5449,
         "error_reason": null
     },
     {
@@ -151,8 +151,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15847800,
-        "latency_ms": 15.8478,
+        "latency_ns": 14823500,
+        "latency_ms": 14.8235,
         "error_reason": null
     },
     {
@@ -164,8 +164,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 16134900,
-        "latency_ms": 16.1349,
+        "latency_ns": 14523100,
+        "latency_ms": 14.5231,
         "error_reason": null
     },
     {
@@ -177,8 +177,8 @@
         "l2_decision": "ALLOW",
         "blocked": false,
         "stopping_layer": null,
-        "latency_ns": 15604700,
-        "latency_ms": 15.6047,
+        "latency_ns": 14535800,
+        "latency_ms": 14.5358,
         "error_reason": null
     },
     {
@@ -190,8 +190,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 1859900,
-        "latency_ms": 1.8599,
+        "latency_ns": 2031900,
+        "latency_ms": 2.0319,
         "error_reason": null
     },
     {
@@ -203,8 +203,8 @@
         "l2_decision": "ALLOW",
         "blocked": false,
         "stopping_layer": null,
-        "latency_ns": 15532000,
-        "latency_ms": 15.532,
+        "latency_ns": 15041500,
+        "latency_ms": 15.0415,
         "error_reason": null
     },
     {
@@ -216,8 +216,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 1874800,
-        "latency_ms": 1.8748,
+        "latency_ns": 6691000,
+        "latency_ms": 6.691,
         "error_reason": null
     },
     {
@@ -229,8 +229,8 @@
         "l2_decision": "ALLOW",
         "blocked": false,
         "stopping_layer": null,
-        "latency_ns": 15820100,
-        "latency_ms": 15.8201,
+        "latency_ns": 15032100,
+        "latency_ms": 15.0321,
         "error_reason": null
     },
     {
@@ -242,8 +242,8 @@
         "l2_decision": "BLOCK",
         "blocked": true,
         "stopping_layer": "L2",
-        "latency_ns": 15670700,
-        "latency_ms": 15.6707,
+        "latency_ns": 15919500,
+        "latency_ms": 15.9195,
         "error_reason": null
     }
 ]

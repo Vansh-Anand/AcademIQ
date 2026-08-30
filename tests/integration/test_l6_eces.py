@@ -5,7 +5,7 @@ import time
 
 from l6_eces.crypto.hasher import HashProvider, CanonicalSerializer
 from l6_eces.crypto.signer import SoftwareSigner
-from l6_eces.chain.store import EvidenceStore
+from l6_eces.chain.store import JsonlEvidenceStore, EvidenceRecoveryManager
 from l6_eces.chain.writer import EvidenceChainWriter
 from l6_eces.forensics.verifier import EvidenceVerifier
 from common.events.schemas import ToolInvocationEvent
@@ -13,7 +13,7 @@ from common.events.schemas import ToolInvocationEvent
 @pytest.fixture
 def temp_store(tmp_path):
     store_dir = str(tmp_path / "evidence")
-    store = EvidenceStore(directory=store_dir)
+    store = JsonlEvidenceStore(directory=store_dir)
     return store
 
 @pytest.fixture

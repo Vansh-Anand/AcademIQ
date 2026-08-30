@@ -1,0 +1,5 @@
+allowed_shell_commands:
+- cmd
+allowed_tools:
+- sys_exec
+policy_id: V4

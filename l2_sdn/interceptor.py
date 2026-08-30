@@ -61,8 +61,10 @@ class DevelopmentShellInterceptor(ShellInterceptor):
                 
             out_event = NormalizedCommandEvent(
                 event_id=f"sdn-{time.time_ns()}",
+                agent_id=event.agent_id,
                 session_id=raw_cmd.session_id,
                 trace_id=raw_cmd.trace_id,
+                command_text=canonical.canonical_text,
                 original_command_hash=normalized.original_hash,
                 canonical_command_hash=canonical.command_hash,
                 normalization_passes=["VariableExpansion", "EncodingDecode", "ANSICQuoting", "AliasResolution", "Canonicalization"],
@@ -76,7 +78,8 @@ class DevelopmentShellInterceptor(ShellInterceptor):
             return decision, out_event
             
         except Exception as e:
-            # Fail closed on parsing error
+            import traceback
+            traceback.print_exc()
             return "BLOCK", self._build_event(event, raw_cmd, "BLOCK", f"SDN_PROCESSING_ERROR: {e}")
             
     def _build_event(self, base_event: ShellCommandEvent, raw: RawShellCommand, decision: str, reason: str) -> NormalizedCommandEvent:

@@ -4,7 +4,7 @@ import json
 import time
 from typing import List
 
-from l6_eces.chain.store import EvidenceStore
+from l6_eces.chain.store import JsonlEvidenceStore
 from l6_eces.crypto.hasher import HashProvider
 from l6_eces.crypto.signer import SoftwareSigner
 from l6_eces.forensics.verifier import EvidenceVerifier
@@ -12,7 +12,7 @@ from l6_eces.forensics.exporter import EvidenceExporter
 from l6_eces.forensics.certificate import CertificateGenerator
 
 def status(args):
-    store = EvidenceStore()
+    store = JsonlEvidenceStore()
     head = store.get_chain_head()
     if not head:
         print("ECES Chain: EMPTY")
@@ -25,7 +25,7 @@ def status(args):
     print(f"Last Updated: {head.updated_at} ns")
     
 def verify(args):
-    store = EvidenceStore()
+    store = JsonlEvidenceStore()
     records = store.read_all()
     
     # We use SoftwareSigner here to hold the verification keys (mocking a registry)
@@ -51,8 +51,18 @@ def verify(args):
         
     print(f"Time Taken: {elapsed:.4f} seconds")
 
+def cmd_recover(args):
+    store = JsonlEvidenceStore()
+    from l6_eces.chain.store import EvidenceRecoveryManager
+    manager = EvidenceRecoveryManager(store)
+    head = manager.recover()
+    if head:
+        print(f"Recovered chain {head.chain_id} up to sequence {head.latest_sequence}")
+    else:
+        print("No chain to recover.")
+
 def export(args):
-    store = EvidenceStore()
+    store = JsonlEvidenceStore()
     hasher = HashProvider()
     signer = SoftwareSigner()
     signer.generate_key()
@@ -65,7 +75,7 @@ def export(args):
         print(f"Export failed: {e}")
 
 def certificate(args):
-    store = EvidenceStore()
+    store = JsonlEvidenceStore()
     records = store.read_all()
     if not records:
         print("No records available to certify.")

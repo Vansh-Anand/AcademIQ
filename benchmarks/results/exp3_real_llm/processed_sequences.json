@@ -1,0 +1,219 @@
+[
+    {
+        "sequence_id": "gen_0",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_FILE_READ"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 22712600
+    },
+    {
+        "sequence_id": "gen_2",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_FILE_READ",
+            "L3_NETWORK"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 45697100
+    },
+    {
+        "sequence_id": "gen_7",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_FILE_READ",
+            "L3_NETWORK",
+            "L3_FILE_READ"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 69283300
+    },
+    {
+        "sequence_id": "gen_10",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_NETWORK"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 25338800
+    },
+    {
+        "sequence_id": "gen_12",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_NETWORK",
+            "L3_FILE_READ"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 46430600
+    },
+    {
+        "sequence_id": "gen_13",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_NETWORK",
+            "L3_FILE_READ",
+            "L3_NETWORK"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 69083600
+    },
+    {
+        "sequence_id": "gen_18",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_NETWORK",
+            "L3_FILE_READ",
+            "L3_PROCESS_EXEC"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 67990000
+    },
+    {
+        "sequence_id": "gen_24",
+        "ground_truth": "PARTIAL_RISK_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 23092900
+    },
+    {
+        "sequence_id": "gen_26",
+        "ground_truth": "BENIGN",
+        "mapped_events": [
+            "L3_FILE_READ",
+            "L3_PROCESS_EXEC"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 45490800
+    },
+    {
+        "sequence_id": "gen_30",
+        "ground_truth": "FULL_EXFILTRATION_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED",
+            "L3_NETWORK"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "THROTTLE",
+        "latency_ns": 45904300
+    },
+    {
+        "sequence_id": "gen_33",
+        "ground_truth": "PARTIAL_RISK_CHAIN",
+        "mapped_events": [
+            "L3_FILE_READ",
+            "L3_PROCESS_EXEC",
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 67844800
+    },
+    {
+        "sequence_id": "gen_40",
+        "ground_truth": "FULL_EXFILTRATION_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED",
+            "L3_NETWORK",
+            "L3_FILE_READ"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "THROTTLE",
+        "latency_ns": 68897300
+    },
+    {
+        "sequence_id": "gen_41",
+        "ground_truth": "REVERSED_ORDER",
+        "mapped_events": [
+            "L3_NETWORK",
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 46158300
+    },
+    {
+        "sequence_id": "gen_45",
+        "ground_truth": "TEMPORALLY_SEPARATED",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED",
+            "L3_PROCESS_EXEC",
+            "L3_FILE_RESTRICTED",
+            "L4_DIVERGENCE_HIGH"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "WARN",
+        "latency_ns": 90060400
+    },
+    {
+        "sequence_id": "gen_46",
+        "ground_truth": "TEMPORALLY_SEPARATED",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED",
+            "L3_NETWORK"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 48456900
+    },
+    {
+        "sequence_id": "gen_47",
+        "ground_truth": "PARTIAL_RISK_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 23417200
+    },
+    {
+        "sequence_id": "gen_48",
+        "ground_truth": "PARTIAL_RISK_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 23366000
+    },
+    {
+        "sequence_id": "gen_49",
+        "ground_truth": "PARTIAL_RISK_CHAIN",
+        "mapped_events": [
+            "L3_FILE_RESTRICTED"
+        ],
+        "baseline_blocked": false,
+        "l5_blocked": false,
+        "final_governance": "ALLOW",
+        "latency_ns": 24677500
+    }
+]

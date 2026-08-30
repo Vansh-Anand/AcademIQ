@@ -51,18 +51,32 @@ class ExecutionCorrelationManager:
             if not executable:
                 return False, UnexpectedExecutionEvent(agent_id=agent_id, syscall_event=event, reason="Missing executable in execve")
                 
-            # Basic correlation logic: does this executable match any pending L2 approved commands?
-            # A real implementation would match canonical AST paths with exact process trees.
             matched = False
             pending = self._pending_l2_decisions.get(agent_id, [])
             for p in pending:
-                # Naive matching: check if the executable name is within the transformations or original.
-                # In Phase 3, we didn't store the exact canonical executable in NormalizedCommandEvent directly,
-                # but we know it's allowed.
-                # For demonstration, we assume it's correlated if there's any pending L2 event in the window.
-                # A robust system extracts the executable from the canonical hash dictionary (which we would persist).
-                matched = True
-                break
+                if p.command_text:
+                    if executable in p.command_text:
+                        # Additionally, if there are arguments, we should see them in the command_text
+                        args_list = event.arguments.get("args", []) if isinstance(event.arguments, dict) else event.arguments
+                        if args_list:
+                            if any(arg in p.command_text for arg in args_list):
+                                matched = True
+                                break
+                        else:
+                            matched = True
+                            break
+                    # For cases where executable might just be 'cat' and command_text is 'cat /etc/passwd'
+                    # Or paths are heavily obfuscated.
+                    # As a fallback string search:
+                    else:
+                        args_list = event.arguments.get("args", []) if isinstance(event.arguments, dict) else event.arguments
+                        if args_list and any(arg in p.command_text for arg in args_list):
+                            matched = True
+                            break
+                else:
+                    # Legacy fallback if command_text is missing
+                    matched = True
+                    break
                 
             if not matched:
                 return False, UnexpectedExecutionEvent(agent_id=agent_id, syscall_event=event, reason=f"Unexpected execve({executable}) without L2 authorization")
@@ -85,7 +99,10 @@ class ExecutionCorrelationManager:
     def _expire_pending_actions(self):
         now = time.time_ns()
         for agent_id, events in list(self._pending_l2_decisions.items()):
-            valid_events = [e for e in events if (now - e.timestamp_ns) <= self.time_window_ns]
+            valid_events = []
+            for e in events:
+                if (now - e.timestamp_ns) <= self.time_window_ns:
+                    valid_events.append(e)
             if not valid_events:
                 del self._pending_l2_decisions[agent_id]
             else:

@@ -1,0 +1,28 @@
+{
+  "run_metrics": {
+    "technique": "adaptive_gcd_policy_hot_reload",
+    "initial_policy_version": 1,
+    "final_policy_version": 4,
+    "successful_reloads": 3,
+    "failed_reloads": 1,
+    "compilation_latency_ms": {
+      "V2": 0.0234,
+      "V3": 0.0433,
+      "V4": 0.0244
+    },
+    "swap_latency_ms": {
+      "V2": 0.0074,
+      "V3": 0.0091,
+      "V4": 0.0047
+    },
+    "total_reload_latency_ms": {
+      "V2": 1.525,
+      "V3": 7.2423,
+      "V4": 1.7481
+    },
+    "inference_operations_during_reload": 250,
+    "inference_failures": 0,
+    "atomic_consistency_violations": 0,
+    "rollback_verified": true
+  }
+}

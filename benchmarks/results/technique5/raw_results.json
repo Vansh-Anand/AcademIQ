@@ -1,0 +1,74 @@
+[
+    {
+        "scenario_id": "scenario_1",
+        "category": "Plain Benign Command",
+        "raw_command": "cat /tmp/safe.txt",
+        "ground_truth": "BENIGN",
+        "raw_l3_decision": "ALLOW",
+        "normalized_l3_decision": "ALLOW",
+        "raw_latency_ns": 62100,
+        "normalized_latency_ns": 49000,
+        "whether_raw_was_false_positive": false,
+        "whether_normalized_was_false_positive": false
+    },
+    {
+        "scenario_id": "scenario_2",
+        "category": "Benign Path Representation Variation",
+        "raw_command": "cat /tmp/././safe.txt",
+        "ground_truth": "BENIGN",
+        "raw_l3_decision": "BLOCK",
+        "normalized_l3_decision": "ALLOW",
+        "raw_latency_ns": 29300,
+        "normalized_latency_ns": 40600,
+        "whether_raw_was_false_positive": true,
+        "whether_normalized_was_false_positive": false
+    },
+    {
+        "scenario_id": "scenario_3",
+        "category": "Benign Path Traversal Representation",
+        "raw_command": "cat /tmp/../tmp/safe.txt",
+        "ground_truth": "BENIGN",
+        "raw_l3_decision": "ALLOW",
+        "normalized_l3_decision": "ALLOW",
+        "raw_latency_ns": 46800,
+        "normalized_latency_ns": 41100,
+        "whether_raw_was_false_positive": false,
+        "whether_normalized_was_false_positive": false
+    },
+    {
+        "scenario_id": "scenario_4",
+        "category": "Malicious Plain Command",
+        "raw_command": "rm -rf /etc/passwd",
+        "ground_truth": "MALICIOUS",
+        "raw_l3_decision": "ALLOW",
+        "normalized_l3_decision": "BLOCK",
+        "raw_latency_ns": 13600,
+        "normalized_latency_ns": 0,
+        "whether_raw_was_false_positive": false,
+        "whether_normalized_was_false_positive": false
+    },
+    {
+        "scenario_id": "scenario_5",
+        "category": "Malicious Obfuscated Command",
+        "raw_command": "r\\m -r\\f /etc/passwd",
+        "ground_truth": "MALICIOUS",
+        "raw_l3_decision": "ALLOW",
+        "normalized_l3_decision": "BLOCK",
+        "raw_latency_ns": 29500,
+        "normalized_latency_ns": 0,
+        "whether_raw_was_false_positive": false,
+        "whether_normalized_was_false_positive": false
+    },
+    {
+        "scenario_id": "scenario_6",
+        "category": "Authorization Correlation Mismatch",
+        "raw_command": "c'a't /t'm'p/safe.txt",
+        "ground_truth": "BENIGN",
+        "raw_l3_decision": "BLOCK",
+        "normalized_l3_decision": "ALLOW",
+        "raw_latency_ns": 37600,
+        "normalized_latency_ns": 34000,
+        "whether_raw_was_false_positive": true,
+        "whether_normalized_was_false_positive": false
+    }
+]

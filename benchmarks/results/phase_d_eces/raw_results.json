@@ -1,0 +1,34 @@
+{
+  "Scenarios": {
+    "A_Normal": {
+      "valid": true,
+      "records_checked": 101
+    },
+    "B_ProcessRestart": {
+      "valid": true,
+      "head_match": true
+    },
+    "C_PayloadTampering": {
+      "valid": false,
+      "failure_type": "PAYLOAD_HASH_MISMATCH",
+      "first_failure_sequence": 50
+    },
+    "D_HashTampering": {
+      "valid": false,
+      "failure_type": "CHAIN_BREAK",
+      "first_failure_sequence": 60
+    },
+    "E_MultipleSessions": {
+      "session_a_count": 101,
+      "session_b_count": 3,
+      "isolated": true
+    }
+  },
+  "Performance": {
+    "mean_append_ns": 24388563.0,
+    "median_append_ns": 23277200,
+    "p95_append_ns": 48693300,
+    "max_append_ns": 71713400,
+    "mean_verification_ns": 468221800
+  }
+}

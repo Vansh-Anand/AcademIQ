@@ -10,5 +10,5 @@
     "threshold_delta": 0.07619080158009617,
     "rejected_poisoning_candidates": 3,
     "admitted_recalibration_samples": 50,
-    "mean_latency_ms": 0.03760074626865672
+    "mean_latency_ms": 0.0463563432835821
 }

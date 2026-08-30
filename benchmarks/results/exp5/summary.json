@@ -1,23 +1,73 @@
 {
-    "experiment": "EXP-5",
-    "name": "Synthetic Unlabeled Behavioral Divergence Detection",
-    "training_trajectories": 1000,
-    "benign_holdout": 200,
-    "anomalous_holdout": 200,
-    "baseline_detection_rate": 0.0,
-    "academiq_detection_rate": 100.0,
-    "baseline_asr": 100.0,
-    "protected_asr": 0.0,
-    "true_positives": 200,
-    "true_negatives": 199,
-    "false_positives": 1,
-    "false_negatives": 0,
-    "precision": 0.9950248756218906,
-    "recall": 1.0,
-    "f1_score": 0.9975062344139651,
-    "benign_mean_divergence": 0.483617186994537,
-    "anomalous_mean_divergence": 0.6864608783753968,
-    "mean_latency_ms": 0.03043775,
-    "median_latency_ms": 0.03043775,
-    "p95_latency_ms": 0.03043775
+    "experiment_id": "EXP-5",
+    "timestamp": 1788025376.9832954,
+    "random_seed": 42,
+    "dataset": {
+        "training_trajectories": 1000,
+        "benign_holdout": 200,
+        "anomalous_holdout": 200
+    },
+    "model_architecture": "SiameseRecurrentAutoencoder + IsolationForest",
+    "baseline_metrics": {
+        "detection_rate": 0.0,
+        "asr": 100.0,
+        "tp": 0,
+        "fn": 200,
+        "fp": 0,
+        "tn": 200
+    },
+    "isolation_forest_metrics": {
+        "detection_rate": 100.0,
+        "asr": 0.0,
+        "precision": 0.9950248756218906,
+        "recall": 1.0,
+        "f1": 0.9975062344139651,
+        "fpr": 0.5,
+        "tp": 200,
+        "fn": 0,
+        "fp": 1,
+        "tn": 199
+    },
+    "neural_metrics": {
+        "detection_rate": 2.0,
+        "asr": 98.0,
+        "precision": 0.8,
+        "recall": 0.02,
+        "f1": 0.03902439024390244,
+        "fpr": 0.5,
+        "tp": 4,
+        "fn": 196,
+        "fp": 1,
+        "tn": 199
+    },
+    "ensemble_metrics": {
+        "detection_rate": 100.0,
+        "asr": 0.0,
+        "precision": 0.9950248756218906,
+        "recall": 1.0,
+        "f1": 0.9975062344139651,
+        "fpr": 0.5,
+        "tp": 200,
+        "fn": 0,
+        "fp": 1,
+        "tn": 199
+    },
+    "ensemble_weights": {
+        "isolation": 0.5,
+        "siamese": 0.5
+    },
+    "score_normalization": "Min-Max bounds scaled to [0,1]",
+    "soft_vote_analysis": {
+        "benign_mean_if_component": 0.08820636811668738,
+        "benign_mean_siamese_component": 0.12497385814707174,
+        "benign_mean_final": 0.10659011313187956,
+        "anomalous_mean_if_component": 0.9997109675956559,
+        "anomalous_mean_siamese_component": 0.16451569409666536,
+        "anomalous_mean_final": 0.5821133308461607
+    },
+    "mean_latency_ms": 3.176669,
+    "environment_metadata": {
+        "python_version": "3.13.6 (tags/v3.13.6:4e66535, Aug  6 2025, 14:36:00) [MSC v.1944 64 bit (AMD64)]",
+        "torch_version": "2.12.1+cpu"
+    }
 }

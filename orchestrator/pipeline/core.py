@@ -5,7 +5,7 @@ import uuid
 
 from l6_eces.crypto.hasher import HashProvider
 from l6_eces.crypto.signer import SoftwareSigner
-from l6_eces.chain.store import EvidenceStore
+from l6_eces.chain.store import JsonlEvidenceStore
 from l6_eces.chain.writer import EvidenceChainWriter
 from l6_eces.redaction.policy import EvidenceRedactionPolicy
 
@@ -16,7 +16,7 @@ class AcademiqOrchestrator:
         self.session_id = str(uuid.uuid4())
         
         # ECES setup
-        self.eces_store = EvidenceStore()
+        self.eces_store = JsonlEvidenceStore()
         self.eces_hasher = HashProvider()
         self.eces_signer = SoftwareSigner()
         self.eces_signer.generate_key()

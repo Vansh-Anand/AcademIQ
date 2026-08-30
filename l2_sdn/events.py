@@ -65,6 +65,7 @@ class NormalizedCommandEvent(BaseModel):
     trace_id: str
     agent_id: str = "unknown"
     timestamp_ns: int = Field(default_factory=time.time_ns)
+    command_text: str = ""
     original_command_hash: str
     canonical_command_hash: str
     normalization_passes: List[str] = []

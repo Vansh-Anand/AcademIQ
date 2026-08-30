@@ -8,3 +8,9 @@ drift_detection:
     minimum_admitted_samples: 50
     percentile: 99
     cooldown_seconds: 3600
+  ensemble:
+    enabled: true
+    siamese_weight: 0.5
+    isolation_weight: 0.5
+    siamese_checkpoint: "config/checkpoints/l4_siamese.pt"
+    centroid_path: "config/checkpoints/l4_benign_centroid.pt"

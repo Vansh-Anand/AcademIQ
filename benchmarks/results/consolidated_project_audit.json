@@ -1,0 +1,157 @@
+{
+  "metadata": {
+    "report_generated": "2026-08-29T21:14:00+05:30",
+    "platform": "Windows 11 (AMD64)",
+    "python_version": "3.13.6",
+    "pytest_version": "8.2.2",
+    "environment": "SIMULATION (Windows/no native eBPF)"
+  },
+  "test_suite": {
+    "total_collected": 81,
+    "passed": 80,
+    "failed": 0,
+    "skipped": 1,
+    "execution_time_s": 17.13,
+    "skipped_reason": "EXP-1 model-level test requires HuggingFace model loading (conditionally skipped in CI-like mode)"
+  },
+  "experiments": {
+    "EXP1_direct_prompt_injection": {
+      "validation_type": "REAL EXECUTED (HuggingFace TinyLlama) + SIMULATED pipeline",
+      "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "trials": 5,
+      "baseline_asr_pct": 20.0,
+      "protected_asr_pct": 0.0,
+      "stopping_layer": "L1",
+      "latency_ns": 4182400,
+      "eces_session": "c4a4d563-59b9-4c4e-939e-8adc4d76a221"
+    },
+    "EXP2_obfuscated_command": {
+      "validation_type": "SIMULATED (L2 SDN interceptor)",
+      "total_payloads": 19,
+      "malicious": 15,
+      "baseline_asr_pct": 20.0,
+      "protected_asr_pct": 6.67,
+      "detection_rate_pct": 93.33,
+      "false_negatives": 1,
+      "mean_latency_ms": 12.73
+    },
+    "EXP3_multistep_exfiltration": {
+      "validation_type": "SIMULATED (L5 RiskChain Bayesian)",
+      "scenarios": 6,
+      "baseline_asr_pct": 100.0,
+      "protected_asr_pct": 0.0,
+      "detection_rate_pct": 100.0,
+      "governance_freeze_triggered": true,
+      "max_bayesian_risk": 0.997,
+      "note": "CrossSessionEvent schema error is non-fatal; does not affect governance outcome"
+    },
+    "EXP4_ptrace_behavior": {
+      "validation_type": "SIMULATED (telemetry replay from JSONL fixture)",
+      "total_events": 6,
+      "baseline_false_positives": 1,
+      "academiq_false_positives": 0,
+      "detection_rate_pct": 100.0,
+      "latency_ms": 35.18
+    },
+    "EXP5_behavioral_divergence": {
+      "validation_type": "SIMULATED (synthetic dataset, IsolationForest)",
+      "training_trajectories": 1000,
+      "benign_holdout": 200,
+      "anomalous_holdout": 200,
+      "baseline_asr_pct": 100.0,
+      "protected_asr_pct": 0.0,
+      "detection_rate_pct": 100.0,
+      "precision": 0.9901,
+      "recall": 1.0,
+      "f1_score": 0.995,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "latency_ms": 0.0278
+    }
+  },
+  "techniques": {
+    "T1_CUSUM_ece_recalibration": {
+      "validation_type": "SIMULATED (synthetic divergence scores)",
+      "initial_threshold": 0.5142,
+      "final_threshold": 0.5904,
+      "threshold_delta": 0.0762,
+      "observations_to_detect": 215,
+      "rejected_poisoning_candidates": 3,
+      "recalibration_successful": true,
+      "mean_latency_ms": 0.0464
+    },
+    "T2_riskpath_causal_analysis": {
+      "validation_type": "SIMULATED (DAG path analysis)",
+      "algorithm": "Topological sort with DP highest-risk path (NOT Ford-Fulkerson max-flow)",
+      "scenarios": 5,
+      "fingerprint_determinism_verified": true,
+      "causal_validation_prevents_reversed_paths": true,
+      "max_risk_score": 2.3
+    },
+    "T3_cross_session_replay": {
+      "validation_type": "SIMULATED (RiskPathAnalyzer + replay registry)",
+      "scenarios": 7,
+      "new_pattern_detected": true,
+      "replay_alert_raised": true,
+      "coordinated_pattern_detected": true,
+      "legitimate_repeat_bypassed": true,
+      "all_scenarios_passed": true
+    },
+    "T4_gcd_hot_reload": {
+      "validation_type": "IMPLEMENTED + UNIT TESTED",
+      "successful_reloads": 3,
+      "failed_reloads_handled": 1,
+      "rollback_verified": true,
+      "concurrent_inference_ops": 250,
+      "atomic_consistency_violations": 0,
+      "mean_compilation_latency_ms": 0.031
+    },
+    "T5_sdn_l3_synergy": {
+      "validation_type": "SIMULATED (controlled A/B test)",
+      "scenarios": 6,
+      "raw_fpr_pct": 50.0,
+      "normalized_fpr_pct": 0.0,
+      "fpr_reduction_pct": 100.0,
+      "raw_detection_rate_pct": 0.0,
+      "normalized_detection_rate_pct": 100.0
+    }
+  },
+  "layer_status": {
+    "L1_GCD": {
+      "status": "VALIDATED",
+      "real_model": true,
+      "model": "TinyLlama",
+      "note": "GCDLogitsProcessor + PDA + hot reload tested"
+    },
+    "L2_SDN": {
+      "status": "VALIDATED",
+      "real_model": false,
+      "note": "20 adversarial integration tests passing, bashlex parser"
+    },
+    "L3_eBPF": {
+      "status": "SCAFFOLDED (Windows)",
+      "real_kernel": false,
+      "note": "BPF C code and NativeL3Collector exist but require Linux + BPF compilation"
+    },
+    "L4_Divergence": {
+      "status": "SIMULATED",
+      "real_model": true,
+      "note": "IsolationForest trained on synthetic data, ECE + CUSUM implemented"
+    },
+    "L5_RiskChain": {
+      "status": "SIMULATED",
+      "real_model": false,
+      "note": "Bayesian risk, DAG path analysis, cross-session replay all exercised"
+    },
+    "L6_ECES": {
+      "status": "VALIDATED",
+      "real_model": false,
+      "note": "SHA-256 hash chain, software ECDSA signer, tamper detection all tested"
+    },
+    "L7_Trust": {
+      "status": "SCAFFOLDED",
+      "real_model": false,
+      "note": "SimulationTEEProvider works; Intel TDX / AMD SEV-SNP require hardware"
+    }
+  }
+}

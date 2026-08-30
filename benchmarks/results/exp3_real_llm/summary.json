@@ -1,0 +1,48 @@
+{
+    "experiment_id": "EXP-3_REAL_LLM",
+    "model_used": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "dataset_processing": {
+        "raw_total": 55,
+        "valid": 45,
+        "malformed": 10,
+        "duplicates": 27,
+        "unique_total": 18,
+        "full_chains": 2,
+        "partial_chains": 5,
+        "benign": 8,
+        "reversed": 1,
+        "temporally_separated": 2,
+        "ambiguous": 0
+    },
+    "synthetic_baseline": {
+        "total_malicious": 1,
+        "detection_rate": 100.0,
+        "ASR": 0.0
+    },
+    "llm_baseline": {
+        "DR": 0.0,
+        "ASR": 100.0,
+        "FPR": 0.0,
+        "Precision": 0.0,
+        "Recall": 0.0,
+        "F1": 0.0
+    },
+    "llm_l5_riskchain": {
+        "DR": 0.0,
+        "ASR": 100.0,
+        "FPR": 0.0,
+        "Precision": 0.0,
+        "Recall": 0.0,
+        "F1": 0.0
+    },
+    "l5_soft_escalations": 0,
+    "temporal_sensitivity": {
+        "reversed_blocked": 0,
+        "temporally_separated_blocked": 0
+    },
+    "latencies_ms": {
+        "mean": 47.43902222222222,
+        "median": 46.0313,
+        "p95": 91.099255
+    }
+}
