@@ -1,0 +1,196 @@
+import os
+import sqlite3
+from typing import List, Tuple
+from dashboard_api.schemas.status import (
+    SystemStatusResponse,
+    LayerSystemStatus,
+    CapabilityStatus,
+    InfrastructureStatus
+)
+from dashboard_api.schemas.pipeline import ExecutionMode
+
+class StatusService:
+    @classmethod
+    def get_system_status(cls) -> SystemStatusResponse:
+        database_status, eces_ok = cls._check_database()
+        
+        # Determine overall status
+        overall_status = "PARTIALLY OPERATIONAL"
+        overall_description = (
+            "Core application security layers and research components are operational. "
+            "Native Linux eBPF telemetry and native OS isolation are not active in the current Windows environment."
+        )
+
+        return SystemStatusResponse(
+            api_version="1.0.0",
+            backend_status="OPERATIONAL",
+            database_status=database_status,
+            overall_status=overall_status,
+            overall_description=overall_description,
+            infrastructure=cls._get_infrastructure(eces_ok),
+            layers=cls._get_layers(),
+            capabilities=cls._get_capabilities()
+        )
+
+    @classmethod
+    def _check_database(cls) -> Tuple[str, bool]:
+        db_path = ".data/evidence/eces.db"
+        if not os.path.exists(db_path):
+            return "UNAVAILABLE", False
+        
+        try:
+            with sqlite3.connect(db_path) as conn:
+                conn.execute("SELECT 1")
+            return "OPERATIONAL", True
+        except Exception:
+            return "ERROR", False
+
+    @classmethod
+    def _get_infrastructure(cls, eces_ok: bool) -> List[InfrastructureStatus]:
+        return [
+            InfrastructureStatus(
+                name="Dashboard API",
+                status="OPERATIONAL",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Serving REST API for frontend dashboard."
+            ),
+            InfrastructureStatus(
+                name="ECES SQLite Database",
+                status="OPERATIONAL" if eces_ok else "UNAVAILABLE",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Durable append-only evidence storage."
+            ),
+            InfrastructureStatus(
+                name="Pipeline Engine",
+                status="OPERATIONAL",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Multi-layer orchestration backend."
+            ),
+            InfrastructureStatus(
+                name="Native Runtime Telemetry",
+                status="UNAVAILABLE",
+                execution_mode=ExecutionMode.UNAVAILABLE,
+                description="Native eBPF kernel probes (Linux only)."
+            )
+        ]
+
+    @classmethod
+    def _get_layers(cls) -> List[LayerSystemStatus]:
+        return [
+            LayerSystemStatus(
+                layer_id="L1",
+                name="Grammar-Constrained Decoding",
+                operational_status="OPERATIONAL",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Enforces strict schema compliance before LLM execution.",
+                capabilities=["GCD", "Pushdown Automaton", "YAML policy compilation", "Policy hot reload"],
+                limitations=["Only supports constrained prompt patterns."]
+            ),
+            LayerSystemStatus(
+                layer_id="L2",
+                name="Semantic Detection & Normalization",
+                operational_status="OPERATIONAL",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Parses, normalizes, and canonicalizes shell commands.",
+                capabilities=["Shell parsing", "Normalization", "Canonicalization", "Semantic policy matching"],
+                limitations=["Limited to known shell grammar trees."]
+            ),
+            LayerSystemStatus(
+                layer_id="L3",
+                name="Runtime Telemetry",
+                operational_status="PARTIAL",
+                execution_mode=ExecutionMode.SIMULATED,
+                description="Collects execution context and OS telemetry.",
+                capabilities=["JSONL telemetry replay", "ExecutionCorrelationManager"],
+                limitations=["Native eBPF kernel probes unavailable on current Windows host."]
+            ),
+            LayerSystemStatus(
+                layer_id="L4",
+                name="Behavioral Divergence",
+                operational_status="PARTIAL",
+                execution_mode=ExecutionMode.SYNTHETIC,
+                description="Detects anomalous behaviors using ML models.",
+                capabilities=["Isolation Forest", "Siamese Recurrent Autoencoder", "CUSUM adaptive recalibration"],
+                limitations=["Models trained on synthetic benchmarks.", "No real-time continuous deployment active."]
+            ),
+            LayerSystemStatus(
+                layer_id="L5",
+                name="Bayesian RiskChain Correlation",
+                operational_status="OPERATIONAL",
+                execution_mode=ExecutionMode.BENCHMARK,
+                description="Analyzes attack causal chains and tracks cross-session replays.",
+                capabilities=["RiskChainGraph", "BayesianRiskModel", "GovernanceEngine", "RiskPathAnalyzer", "CrossSessionReplayDetector"],
+                limitations=["Evaluated primarily in benchmark modes."]
+            ),
+            LayerSystemStatus(
+                layer_id="L6",
+                name="ECES Evidence",
+                operational_status="OPERATIONAL",
+                execution_mode=ExecutionMode.REAL_RUNTIME,
+                description="Generates verifiable cryptographic evidence chains.",
+                capabilities=["ECES hash chain", "SQLite durable evidence store", "Chain verification utility"],
+                limitations=["Single-node deployment without external blockchain anchoring."]
+            ),
+            LayerSystemStatus(
+                layer_id="L7",
+                name="Agent Isolation",
+                operational_status="UNAVAILABLE",
+                execution_mode=ExecutionMode.UNAVAILABLE,
+                description="Enforces OS-level agent containment boundaries.",
+                capabilities=["AgentScopeManager API"],
+                limitations=["cgroup/namespace isolation not supported on Windows.", "Native OS-level isolation is not active."]
+            )
+        ]
+
+    @classmethod
+    def _get_capabilities(cls) -> List[CapabilityStatus]:
+        return [
+            CapabilityStatus(
+                name="Prompt Injection Defense",
+                status="Operational",
+                validation_level="Real LLM benchmark",
+                execution_mode=ExecutionMode.BENCHMARK
+            ),
+            CapabilityStatus(
+                name="Obfuscated Command Detection",
+                status="Operational",
+                validation_level="Real LLM benchmark",
+                execution_mode=ExecutionMode.BENCHMARK
+            ),
+            CapabilityStatus(
+                name="Runtime Syscall Detection",
+                status="Partial",
+                validation_level="Telemetry replay",
+                execution_mode=ExecutionMode.SIMULATED
+            ),
+            CapabilityStatus(
+                name="Behavioral Divergence",
+                status="Operational",
+                validation_level="Synthetic benchmark",
+                execution_mode=ExecutionMode.SYNTHETIC
+            ),
+            CapabilityStatus(
+                name="RiskChain Detection",
+                status="Operational",
+                validation_level="Benchmark",
+                execution_mode=ExecutionMode.BENCHMARK
+            ),
+            CapabilityStatus(
+                name="ECES Persistence",
+                status="Operational",
+                validation_level="SQLite verification",
+                execution_mode=ExecutionMode.REAL_RUNTIME
+            ),
+            CapabilityStatus(
+                name="Native eBPF",
+                status="Pending",
+                validation_level="Not validated",
+                execution_mode=ExecutionMode.UNAVAILABLE
+            ),
+            CapabilityStatus(
+                name="Native Process Isolation",
+                status="Pending",
+                validation_level="Not validated",
+                execution_mode=ExecutionMode.UNAVAILABLE
+            )
+        ]

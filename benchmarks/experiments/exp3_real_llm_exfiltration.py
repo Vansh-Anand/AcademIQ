@@ -409,8 +409,11 @@ def run_evaluation(generations):
         total_latency = 0
         
         cumulative_nodes = []
+        print(f"DEBUG_LOOP: len(nodes) for {gen['generation_id']} is {len(nodes)}")
         for idx, node in enumerate(nodes):
             cumulative_nodes.append(node)
+            
+            print(f"DEBUG_LOOP: executing {gen['generation_id']} step {idx}")
             
             # Feed cumulative nodes
             sdef = ScenarioDefinition(
@@ -424,7 +427,11 @@ def run_evaluation(generations):
             res = harness.run_scenario(sdef)
             total_latency += res.total_latency_ns
             
+            if res.errors:
+                print(f"ERRORS in scenario {sdef.scenario_id}: {res.errors}")
+            
             meta = res.metadata
+            print(f"DEBUG: meta={meta}")
             gov_dec = meta.get("gov_decision", {}).get("decision", "ALLOW")
             
             timeline.append({

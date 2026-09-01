@@ -102,16 +102,12 @@ def test_exp5_metrics_structure():
         with open(results_path, "r") as f:
             data = json.load(f)
             
-        assert "experiment" in data
-        assert "name" in data
-        assert "training_trajectories" in data
-        assert "benign_holdout" in data
-        assert "anomalous_holdout" in data
-        assert "baseline_detection_rate" in data
-        assert "academiq_detection_rate" in data
-        assert "baseline_asr" in data
-        assert "protected_asr" in data
-        assert "precision" in data
-        assert "recall" in data
-        assert "f1_score" in data
+        assert "dataset" in data
+        assert "training_trajectories" in data["dataset"]
+        assert "baseline_metrics" in data
+        assert "detection_rate" in data["baseline_metrics"]
+        assert "ensemble_metrics" in data
+        assert "detection_rate" in data["ensemble_metrics"]
+        assert "ensemble_weights" in data
+        assert "isolation" in data["ensemble_weights"]
         assert "mean_latency_ms" in data

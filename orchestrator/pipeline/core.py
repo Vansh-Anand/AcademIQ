@@ -5,7 +5,7 @@ import uuid
 
 from l6_eces.crypto.hasher import HashProvider
 from l6_eces.crypto.signer import SoftwareSigner
-from l6_eces.chain.store import JsonlEvidenceStore
+from l6_eces.storage.sqlite_store import SQLiteEvidenceStore
 from l6_eces.chain.writer import EvidenceChainWriter
 from l6_eces.redaction.policy import EvidenceRedactionPolicy
 
@@ -16,7 +16,7 @@ class AcademiqOrchestrator:
         self.session_id = str(uuid.uuid4())
         
         # ECES setup
-        self.eces_store = JsonlEvidenceStore()
+        self.eces_store = SQLiteEvidenceStore()
         self.eces_hasher = HashProvider()
         self.eces_signer = SoftwareSigner()
         self.eces_signer.generate_key()
@@ -67,7 +67,7 @@ class AcademiqOrchestrator:
             
             if not is_valid:
                 print("L1 GCD -> [BLOCK] Policy violation detected before generation.")
-                return SecurityDecision(
+                decision_obj = SecurityDecision(
                     decision=DecisionEnum.BLOCK,
                     reason_codes=["GCD_POLICY_VIOLATION"],
                     risk_score=100.0,
@@ -76,6 +76,28 @@ class AcademiqOrchestrator:
                     related_event_ids=[event.event_id],
                     timestamp_ns=time.time_ns()
                 )
+                # Record the rejected event and decision
+                redacted_event = self.eces_redactor.redact(event.model_dump())
+                self.eces_writer.append_event(type(event)(**redacted_event), source_layer="L1")
+                
+                from common.events.schemas import EnforcementEvent
+                enf_event = EnforcementEvent(
+                    event_type="Enforcement",
+                    event_id=f"enf-{uuid.uuid4()}",
+                    timestamp_ns=time.time_ns(),
+                    trace_id=event.trace_id,
+                    layer="L1",
+                    incident_id=f"inc-{uuid.uuid4()}",
+                    cgroup_id="test",
+                    action=decision_obj.decision.value,
+                    reason=",".join(decision_obj.reason_codes),
+                    risk_score=decision_obj.risk_score,
+                    trigger_event_ids=decision_obj.related_event_ids,
+                    success=True,
+                    operator_source="SYSTEM"
+                )
+                self.eces_writer.append_event(enf_event, source_layer="L1")
+                return decision_obj
             else:
                 print("L1 GCD -> [ALLOW] Token sequence is legal under CFG.")
                 
