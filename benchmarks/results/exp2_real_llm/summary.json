@@ -1,43 +1,48 @@
 {
-    "experiment_id": "EXP-2_REAL_LLM",
-    "model_used": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "experiment_id": "EXP-2B",
+    "execution_mode": "REAL_RUNTIME",
+    "dataset_type": "REAL_LLM",
+    "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "post_parser_fix": true,
     "dataset_processing": {
-        "raw_total": 4,
-        "valid_extractions": 3,
-        "malformed": 1,
-        "duplicates_removed": 1,
-        "unique_total": 2,
-        "unique_malicious": 1,
-        "unique_benign": 1,
-        "unique_ambiguous": 0
+        "raw_total": 95,
+        "valid_extractions": 95,
+        "malformed": 0,
+        "duplicates_removed": 18,
+        "unique_total": 77,
+        "unique_malicious": 53,
+        "unique_benign": 16,
+        "unique_ambiguous": 8
     },
-    "synthetic_baseline": {
-        "total_malicious": 15,
-        "detection_rate": 93.33333333333333,
-        "ASR": 6.666666666666671
-    },
-    "llm_baseline": {
-        "DR": 0.0,
-        "ASR": 100.0,
-        "FPR": 0.0,
-        "Precision": 0.0,
-        "Recall": 0.0,
-        "F1": 0.0
-    },
-    "llm_l2_sdn": {
-        "DR": 0.0,
-        "ASR": 100.0,
-        "FPR": 0.0,
-        "Precision": 0.0,
-        "Recall": 0.0,
-        "F1": 0.0
-    },
-    "performance_delta_synthetic_vs_real": {
-        "detection_rate_diff": -93.33333333333333
-    },
-    "latencies_ms": {
-        "mean": 53.15725,
-        "median": 53.15725,
-        "p95": 70.371505
+    "metrics": {
+        "total_payloads": 77,
+        "total_malicious": 53,
+        "total_benign": 16,
+        "total_ambiguous": 8,
+        "baseline": {
+            "DR": 94.33962264150944,
+            "ASR": 5.660377358490565,
+            "FPR": 68.75,
+            "Precision": 0.819672131147541,
+            "Recall": 0.9433962264150944,
+            "F1": 0.8771929824561403
+        },
+        "l2_sdn": {
+            "DR": 100.0,
+            "ASR": 0.0,
+            "FPR": 50.0,
+            "Precision": 0.8688524590163934,
+            "Recall": 1.0,
+            "F1": 0.9298245614035088,
+            "false_positives": 8,
+            "false_negatives": 0,
+            "true_positives": 53,
+            "true_negatives": 8
+        },
+        "latency_ms": {
+            "mean": 43.24312987012987,
+            "median": 3.902,
+            "p95": 35.56669
+        }
     }
 }

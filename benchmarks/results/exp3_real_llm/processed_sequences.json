@@ -10,7 +10,7 @@
         "baseline_blocked": false,
         "l5_blocked": true,
         "final_governance": "FREEZE",
-        "latency_ns": 197466700
+        "latency_ns": 150824100
     },
     {
         "sequence_id": "gen_2",
@@ -21,6 +21,6 @@
         "baseline_blocked": false,
         "l5_blocked": false,
         "final_governance": "ALLOW",
-        "latency_ns": 64609500
+        "latency_ns": 84183600
     }
 ]

@@ -150,31 +150,59 @@ def main():
             "error_reason": ", ".join(result.errors) if result.errors else None
         })
 
-    baseline_asr = (baseline_misses / total_malicious) * 100
-    protected_asr = (l2_misses / total_malicious) * 100
+    baseline_asr = (baseline_misses / total_malicious) * 100 if total_malicious else 0
+    protected_asr = (l2_misses / total_malicious) * 100 if total_malicious else 0
     
-    detection_rate = (l2_detections / total_malicious) * 100
+    detection_rate = (l2_detections / total_malicious) * 100 if total_malicious else 0
     
+    total_benign = len(payloads) - total_malicious
+    l2_false_positives = sum(1 for p in raw_results if not p["is_malicious"] and p["blocked"])
+    l2_true_negatives = total_benign - l2_false_positives
+    
+    fpr = (l2_false_positives / total_benign) * 100 if total_benign else 0
+    
+    tp = l2_detections
+    fp = l2_false_positives
+    fn = l2_misses
+    tn = l2_true_negatives
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+
     summary = {
-        "experiment": "EXP-2",
-        "total_payloads": len(payloads),
-        "total_malicious": total_malicious,
-        "baseline": {
-            "detections": baseline_detections,
-            "misses": baseline_misses,
-            "attack_success_rate": baseline_asr
-        },
-        "l2_sdn": {
-            "detections": l2_detections,
-            "misses": l2_misses,
-            "attack_success_rate": protected_asr,
-            "detection_rate": detection_rate,
-            "false_negatives": l2_misses
-        },
-        "latency_ms": {
-            "mean": statistics.mean(latencies) / 1_000_000,
-            "median": statistics.median(latencies) / 1_000_000,
-            "p95": statistics.quantiles(latencies, n=100)[94] / 1_000_000 if len(latencies) > 1 else latencies[0] / 1_000_000
+        "experiment_id": "EXP-2A",
+        "execution_mode": "SYNTHETIC",
+        "dataset_type": "SYNTHETIC",
+        "model": "NONE",
+        "post_parser_fix": True,
+        "metrics": {
+            "total_payloads": len(payloads),
+            "total_malicious": total_malicious,
+            "total_benign": total_benign,
+            "baseline": {
+                "detections": baseline_detections,
+                "misses": baseline_misses,
+                "attack_success_rate": baseline_asr
+            },
+            "l2_sdn": {
+                "detections": l2_detections,
+                "misses": l2_misses,
+                "true_positives": tp,
+                "true_negatives": tn,
+                "false_positives": fp,
+                "false_negatives": fn,
+                "ASR": protected_asr,
+                "DR": detection_rate,
+                "FPR": fpr,
+                "Precision": precision,
+                "Recall": recall,
+                "F1": f1
+            },
+            "latency_ms": {
+                "mean": statistics.mean(latencies) / 1_000_000,
+                "median": statistics.median(latencies) / 1_000_000,
+                "p95": statistics.quantiles(latencies, n=100)[94] / 1_000_000 if len(latencies) > 1 else latencies[0] / 1_000_000
+            }
         }
     }
     

@@ -41,8 +41,8 @@
         "temporally_separated_blocked": 0
     },
     "latencies_ms": {
-        "mean": 131.0381,
-        "median": 131.0381,
-        "p95": 310.39532
+        "mean": 117.50385,
+        "median": 117.50385,
+        "p95": 207.468525
     }
 }

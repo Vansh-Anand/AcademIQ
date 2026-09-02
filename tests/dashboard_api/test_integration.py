@@ -11,7 +11,11 @@ client = TestClient(app)
 def setup_teardown_db():
     db_path = ".data/evidence/eces.db"
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    if os.path.exists(db_path):
+        os.remove(db_path)
     yield
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
 def test_pipeline_to_eces_integration():
     """

@@ -1,12 +1,12 @@
 import bashlex
 from typing import List, Dict, Any, Optional
-from .events import ParsedCommand, CommandArgument
+from .events import ParsedCommand, SingleCommand, CommandArgument
 
 class BashlexCommandParser:
     """
     Parses a shell command into a structured AST using bashlex.
-    Extracts the executable, arguments, and handles substitutions/redirections safely
-    without executing anything.
+    Extracts the executables, arguments, and handles substitutions/redirections safely
+    across pipelines and logical operators without executing anything.
     """
     
     def parse(self, command_text: str) -> ParsedCommand:
@@ -16,67 +16,58 @@ class BashlexCommandParser:
             raise ValueError(f"Failed to parse shell command: {e}")
             
         if not nodes:
-            return ParsedCommand(executable="", arguments=[])
+            return ParsedCommand(commands=[])
             
-        # We handle the first command node for simplicity, 
-        # though a real implementation would iterate and build a complex AST tree.
-        node = nodes[0]
+        single_commands = []
         
-        executable = ""
-        arguments = []
-        redirections = []
-        pipelines = False
-        command_substitutions = []
-        environment_references = []
-        
-        class ASTVisitor(bashlex.ast.nodevisitor):
+        class CommandVisitor(bashlex.ast.nodevisitor):
             def __init__(self):
-                self.parts = []
-                self.redirects = []
-                self.command_subs = []
-                self.env_refs = []
+                self.commands = []
                 
             def visitcommand(self, n, parts):
-                pass
+                words = []
+                redirects = []
+                command_subs = []
+                env_refs = []
                 
-            def visitword(self, n, parts):
-                self.parts.append(n.word)
+                class WordVisitor(bashlex.ast.nodevisitor):
+                    def visitword(self, w, wp):
+                        words.append(w.word)
+                    def visitcommandsubstitution(self, c, cp):
+                        command_subs.append(command_text[c.pos[0]:c.pos[1]])
+                        if words:
+                            words[-1] += " $(...)"
+                        else:
+                            words.append("$(...)")
+                    def visitparameter(self, p, pp):
+                        env_refs.append(p.value)
+                    def visitredirect(self, r, *args):
+                        redirects.append(command_text[r.pos[0]:r.pos[1]])
+                        
+                wv = WordVisitor()
+                wv.visit(n)
                 
-            def visitcommandsubstitution(self, n, parts):
-                self.command_subs.append(command_text[n.pos[0]:n.pos[1]])
-                # Mark that this word contains a command substitution
-                if self.parts:
-                    self.parts[-1] += " $(...)"
-                else:
-                    self.parts.append("$(...)")
+                if words:
+                    executable = words[0]
+                    arguments = []
+                    for arg_text in words[1:]:
+                        arguments.append(CommandArgument(
+                            raw_value=arg_text,
+                            is_substitution="$(" in arg_text or "`" in arg_text,
+                            is_variable="$" in arg_text
+                        ))
+                    self.commands.append(SingleCommand(
+                        executable=executable,
+                        arguments=arguments,
+                        redirections=redirects,
+                        pipelines=True,
+                        command_substitutions=command_subs,
+                        environment_references=env_refs
+                    ))
                     
-            def visitparameter(self, n, parts):
-                self.env_refs.append(n.value)
-                
-            def visitredirect(self, n, parts):
-                self.redirects.append(command_text[n.pos[0]:n.pos[1]])
-                
-            def visitpipeline(self, n, parts):
-                nonlocal pipelines
-                pipelines = True
-                
-        visitor = ASTVisitor()
-        visitor.visit(node)
-        
-        if visitor.parts:
-            executable = visitor.parts[0]
-            for arg_text in visitor.parts[1:]:
-                arguments.append(CommandArgument(
-                    raw_value=arg_text,
-                    is_substitution="$(" in arg_text or "`" in arg_text,
-                    is_variable="$" in arg_text
-                ))
-                
-        return ParsedCommand(
-            executable=executable,
-            arguments=arguments,
-            redirections=visitor.redirects,
-            pipelines=pipelines,
-            command_substitutions=visitor.command_subs,
-            environment_references=visitor.env_refs
-        )
+        visitor = CommandVisitor()
+        for node in nodes:
+            visitor.visit(node)
+            
+        return ParsedCommand(commands=visitor.commands)
+

@@ -1,0 +1,80 @@
+[
+    {
+        "scenario_id": "EXP6-1",
+        "aarm": {
+            "detected": true,
+            "decision": "BLOCK",
+            "latency_ms": 0.0123
+        },
+        "academiq": {
+            "detected": true,
+            "latency_ms": 32.7782,
+            "stopping_layer": "L1"
+        }
+    },
+    {
+        "scenario_id": "EXP6-2",
+        "aarm": {
+            "detected": false,
+            "decision": "ALLOW",
+            "latency_ms": 0.0169
+        },
+        "academiq": {
+            "detected": true,
+            "latency_ms": 141.0636,
+            "stopping_layer": "L2"
+        }
+    },
+    {
+        "scenario_id": "EXP6-3",
+        "aarm": {
+            "detected": false,
+            "decision": "ALLOW",
+            "latency_ms": 0.0142
+        },
+        "academiq": {
+            "detected": true,
+            "latency_ms": 29.3136,
+            "stopping_layer": "L5"
+        }
+    },
+    {
+        "scenario_id": "EXP6-4",
+        "aarm": {
+            "detected": false,
+            "decision": "ALLOW",
+            "latency_ms": 0.0069
+        },
+        "academiq": {
+            "detected": true,
+            "latency_ms": 18.2865,
+            "stopping_layer": null
+        }
+    },
+    {
+        "scenario_id": "EXP6-5",
+        "aarm": {
+            "detected": false,
+            "decision": "ALLOW",
+            "latency_ms": 0.0103
+        },
+        "academiq": {
+            "detected": true,
+            "latency_ms": 30.338,
+            "stopping_layer": "L5_CROSS_SESSION"
+        }
+    },
+    {
+        "scenario_id": "EXP6-6",
+        "aarm": {
+            "detected": false,
+            "decision": "ALLOW",
+            "latency_ms": 0.0151
+        },
+        "academiq": {
+            "detected": false,
+            "latency_ms": 12.8995,
+            "stopping_layer": null
+        }
+    }
+]

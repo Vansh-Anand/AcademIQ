@@ -26,8 +26,8 @@ def test_l4_telemetry_fusion(l4_components):
     vocab, aligner, extractor, normalizer = l4_components
     builder = DatasetBuilder("agent_test")
     
-    # Generate 50 legit, 10 attack
-    dataset = builder.build_dataset(num_legit=50, num_attack=10, window_size=64)
+    # Generate 100 legit, 20 attack to reduce variance
+    dataset = builder.build_dataset(num_legit=100, num_attack=20, window_size=64)
     legit_windows = dataset["legitimate"]
     attack_windows = dataset["attack"]
     
@@ -39,7 +39,7 @@ def test_l4_telemetry_fusion(l4_components):
     normalized = np.array([normalizer.transform(f) for f in numeric_flat])
     
     # Train Isolation Forest
-    iso = IsolationForestDetector()
+    iso = IsolationForestDetector(random_state=42)
     iso.fit(normalized)
     
     attack_windows = builder.build_dataset(num_legit=0, num_attack=10, window_size=64)["attack"]

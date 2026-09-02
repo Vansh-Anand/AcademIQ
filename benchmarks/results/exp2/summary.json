@@ -1,22 +1,36 @@
 {
-    "experiment": "EXP-2",
-    "total_payloads": 19,
-    "total_malicious": 15,
-    "baseline": {
-        "detections": 12,
-        "misses": 3,
-        "attack_success_rate": 20.0
-    },
-    "l2_sdn": {
-        "detections": 14,
-        "misses": 1,
-        "attack_success_rate": 6.666666666666667,
-        "detection_rate": 93.33333333333333,
-        "false_negatives": 1
-    },
-    "latency_ms": {
-        "mean": 12.733652631578947,
-        "median": 15.0321,
-        "p95": 16.3071
+    "experiment_id": "EXP-2A",
+    "execution_mode": "SYNTHETIC",
+    "dataset_type": "SYNTHETIC",
+    "model": "NONE",
+    "post_parser_fix": true,
+    "metrics": {
+        "total_payloads": 19,
+        "total_malicious": 15,
+        "total_benign": 4,
+        "baseline": {
+            "detections": 12,
+            "misses": 3,
+            "attack_success_rate": 20.0
+        },
+        "l2_sdn": {
+            "detections": 15,
+            "misses": 0,
+            "true_positives": 15,
+            "true_negatives": 4,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "ASR": 0.0,
+            "DR": 100.0,
+            "FPR": 0.0,
+            "Precision": 1.0,
+            "Recall": 1.0,
+            "F1": 1.0
+        },
+        "latency_ms": {
+            "mean": 13.13518947368421,
+            "median": 13.6593,
+            "p95": 24.7086
+        }
     }
 }

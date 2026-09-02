@@ -24,7 +24,7 @@ class RawShellCommand(BaseModel):
     session_id: str
     trace_id: str
 
-class ParsedCommand(BaseModel):
+class SingleCommand(BaseModel):
     executable: str
     arguments: List[CommandArgument]
     redirections: List[str] = []
@@ -34,18 +34,25 @@ class ParsedCommand(BaseModel):
     aliases: List[str] = []
     source_location: str = "stdin"
 
+class ParsedCommand(BaseModel):
+    commands: List[SingleCommand]
+
 class NormalizedCommand(BaseModel):
     original_hash: str
     normalized_text: str
     normalized_ast: ParsedCommand
     transformations_applied: List[Dict[str, Any]] = []
 
-class CanonicalCommand(BaseModel):
+class SingleCanonicalCommand(BaseModel):
     executable: str
     canonical_arguments: List[str]
     canonical_paths: List[CommandPath]
     canonical_environment: Dict[str, str] = {}
     canonical_redirections: List[str] = []
+    canonical_text: str
+
+class CanonicalCommand(BaseModel):
+    commands: List[SingleCanonicalCommand]
     canonical_text: str
     command_hash: str
 

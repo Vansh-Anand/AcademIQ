@@ -34,7 +34,7 @@ class DevelopmentShellInterceptor(ShellInterceptor):
             parsed = self.parser.parse(raw_cmd.command_text)
             
             # Sub-check: unresolved substitutions
-            if parsed.command_substitutions:
+            if any(cmd.command_substitutions for cmd in parsed.commands):
                 # We can't safely resolve this. Fail closed.
                 return "BLOCK", self._build_event(event, raw_cmd, "BLOCK", "SDN_UNRESOLVED_SUBSTITUTION")
                 

@@ -131,6 +131,19 @@ class ExperimentService:
         if dir_name == "technique5":
             false_positive_rate = protected_metrics.get("false_positive_rate") if protected_metrics else None
 
+        # Special case for EXP-6
+        if dir_name == "exp6_aarm_comparison":
+            overall = raw_data.get("overall_metrics", {})
+            academiq_stats = overall.get("AcademIQ", {})
+            attack_success_rate = academiq_stats.get("ASR")
+            detection_rate = academiq_stats.get("DR")
+            false_positive_rate = academiq_stats.get("FPR")
+            f1_score = academiq_stats.get("F1")
+            
+            # Re-structure for UI visualization
+            raw_data["protected_metrics"] = academiq_stats
+            raw_data["baseline_metrics"] = overall.get("AARM", {})
+
         # Build latencies
         latency_metrics = None
         if "mean_latency_ms" in raw_data:

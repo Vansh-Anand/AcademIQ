@@ -19,7 +19,8 @@ class EvidenceService:
             return SessionListResponse(sessions=[])
             
         sessions = []
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             # Query unique sessions and their event counts / min timestamps
             cursor = conn.execute("""
                 SELECT session_id, count(*), min(timestamp_ns)
@@ -35,6 +36,8 @@ class EvidenceService:
                     start_time_ns=row[2],
                     execution_mode=ExecutionMode.REAL_RUNTIME
                 ))
+        finally:
+            conn.close()
                 
         return SessionListResponse(sessions=sessions)
         
@@ -43,7 +46,8 @@ class EvidenceService:
             return None
             
         chain = []
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             cursor = conn.execute("""
                 SELECT sequence_number, timestamp_ns, event_type, source_layer, event_id, previous_hash, event_hash, record_json
                 FROM evidence
@@ -66,6 +70,8 @@ class EvidenceService:
                     event_hash=row[6],
                     payload=json.loads(row[7])
                 ))
+        finally:
+            conn.close()
                 
         return SessionDetailResponse(session_id=session_id, execution_mode=ExecutionMode.REAL_RUNTIME, chain=chain)
 
