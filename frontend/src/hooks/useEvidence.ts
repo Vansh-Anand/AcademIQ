@@ -23,7 +23,12 @@ export const useEvidence = () => {
       const data = await getEvidenceSessions();
       setSessions(data.sessions);
     } catch (err: any) {
-      setSessionsError(err.response?.data?.detail || err.message || 'Failed to fetch sessions');
+      if (err.response?.status === 404) {
+        setSessions([]);
+        setSessionsError(null);
+      } else {
+        setSessionsError(err.response?.data?.detail || err.message || 'Failed to fetch sessions');
+      }
     } finally {
       setSessionsLoading(false);
     }

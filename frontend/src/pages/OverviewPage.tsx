@@ -81,7 +81,11 @@ export const OverviewPage: React.FC = () => {
               {sessions.length}
             </div>
             <div className="mt-2">
-              <ExecutionModeBadge mode={status.database_status === 'OPERATIONAL' ? 'REAL_RUNTIME' : 'UNAVAILABLE'} />
+              {sessions.length === 0 ? (
+                <span className="text-sm text-slate-500 italic">Run a scenario to populate</span>
+              ) : (
+                <ExecutionModeBadge mode={status.database_status === 'OPERATIONAL' ? 'REAL_RUNTIME' : 'UNAVAILABLE'} />
+              )}
             </div>
           </div>
           <Link to="/evidence" className="mt-4 flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">

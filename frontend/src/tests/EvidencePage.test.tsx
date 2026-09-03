@@ -33,13 +33,44 @@ describe('EvidencePage Tests', () => {
     expect(screen.getByText('No Session Selected')).toBeInTheDocument();
   });
 
-  it('handles empty sessions safely', async () => {
+  it('handles empty sessions safely without error banner', async () => {
     vi.mocked(evidenceApi.getEvidenceSessions).mockResolvedValue({ sessions: [] });
 
     render(<EvidencePage />);
     
     await waitFor(() => {
-      expect(screen.getByText('No ECES evidence sessions available.')).toBeInTheDocument();
+      expect(screen.getByText('No evidence sessions yet. Run an attack scenario in the Security Pipeline to generate cryptographic evidence chains.')).toBeInTheDocument();
+      expect(screen.queryByText('Failed to load sessions')).not.toBeInTheDocument();
+    });
+  });
+
+  it('handles 404 as expected empty state without error banner', async () => {
+    const err = new Error('Not Found');
+    (err as any).response = { status: 404, data: { detail: 'Not Found' } };
+    
+    // In our component, we mocked evidenceApi.getEvidenceSessions. 
+    // Wait, the component calls useEvidence which calls getEvidenceSessions.
+    // So we reject getEvidenceSessions with 404.
+    vi.mocked(evidenceApi.getEvidenceSessions).mockRejectedValue(err);
+
+    render(<EvidencePage />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('No evidence sessions yet. Run an attack scenario in the Security Pipeline to generate cryptographic evidence chains.')).toBeInTheDocument();
+      expect(screen.queryByText('Failed to load sessions')).not.toBeInTheDocument();
+    });
+  });
+
+  it('displays error banner for genuine failures (500)', async () => {
+    const err = new Error('Internal Server Error');
+    (err as any).response = { status: 500, data: { detail: 'Internal Server Error' } };
+    vi.mocked(evidenceApi.getEvidenceSessions).mockRejectedValue(err);
+
+    render(<EvidencePage />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Failed to load sessions')).toBeInTheDocument();
+      expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
     });
   });
 

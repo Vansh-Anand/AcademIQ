@@ -88,7 +88,7 @@ export const EvidencePage: React.FC = () => {
             <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 border-dashed flex flex-col items-center justify-center text-center h-full min-h-[400px]">
               <Database className="w-16 h-16 text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900">No Evidence Found</h3>
-              <p className="mt-2 text-sm text-gray-500 max-w-sm">Run scenarios in the Security Pipeline to generate verifiable cryptographic evidence chains.</p>
+              <p className="mt-2 text-sm text-gray-500 max-w-sm">No evidence sessions yet. Run an attack scenario in the Security Pipeline to generate cryptographic evidence chains.</p>
             </div>
           ) : (
             <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 border-dashed flex flex-col items-center justify-center text-center h-full min-h-[400px]">
