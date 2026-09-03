@@ -82,6 +82,16 @@ export interface MetricQueryResponse {
   execution_mode: ExecutionMode;
 }
 
+export interface ChatResponse {
+  assistant_message: string;
+  provider: string;
+  tool_call?: {
+    name: string;
+    arguments: Record<string, any>;
+  };
+  pipeline_result?: PipelineRunResponse;
+}
+
 export interface L1Outcome {
   decision: string;
   latency?: number;
@@ -115,17 +125,20 @@ export interface L5Outcome {
   governance_state?: string;
   highest_risk_path: string;
   cross_session_status: string;
+  execution_mode?: ExecutionMode;
 }
 
 export interface L6Outcome {
   evidence_chain_reference: string;
   chain_status: string;
   storage_backend: string;
+  execution_mode?: ExecutionMode;
 }
 
 export interface L7Outcome {
   isolation_status: string;
   scope_information?: string;
+  execution_mode?: ExecutionMode;
 }
 
 export interface PipelineRunResponse {

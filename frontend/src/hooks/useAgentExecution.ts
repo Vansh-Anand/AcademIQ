@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { runPipelineScenario } from '../api/pipeline';
+import { sendChatMessage, type ChatResponse } from '../api/agent';
 import type { PipelineRunResponse } from '../types/api';
 import type { LayerState } from '../types/pipeline';
 
@@ -23,46 +23,78 @@ const INITIAL_LAYER_STATE: PipelineDisplayState = {
   L7: 'PENDING',
 };
 
-export const usePipelineExecution = () => {
-  const [isRunning, setIsRunning] = useState(false);
+export const useAgentExecution = () => {
+  const [isAgentThinking, setIsAgentThinking] = useState(false);
+  const [isRunningPipeline, setIsRunningPipeline] = useState(false);
+  
   const [error, setError] = useState<string | null>(null);
+  
+  const [agentResponse, setAgentResponse] = useState<ChatResponse | null>(null);
   const [result, setResult] = useState<PipelineRunResponse | null>(null);
+  const [pendingResult, setPendingResult] = useState<PipelineRunResponse | null>(null);
+  
   const [layerStates, setLayerStates] = useState<PipelineDisplayState>(INITIAL_LAYER_STATE);
   const [currentLayer, setCurrentLayer] = useState<string | null>(null);
   const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
-  const [pendingResult, setPendingResult] = useState<PipelineRunResponse | null>(null);
+  
   const [executionId, setExecutionId] = useState<number>(0);
 
-  const executeScenario = useCallback(async (scenarioId: string) => {
-    setIsRunning(true);
+  const sendMessage = useCallback(async (message: string) => {
+    setIsAgentThinking(true);
+    setIsRunningPipeline(false);
     setError(null);
+    setAgentResponse(null);
     setResult(null);
     setPendingResult(null);
     setLayerStates({ ...INITIAL_LAYER_STATE });
     setCurrentLayer(null);
     setSelectedLayerId(null);
-    setExecutionId(Date.now()); // Unique ID for this execution
+    setExecutionId(Date.now()); 
 
     try {
-      // 1. Fetch synchronous response from backend
-      const response = await runPipelineScenario(scenarioId);
-      setPendingResult(response);
+      const response = await sendChatMessage(message);
+      setAgentResponse(response);
+      setIsAgentThinking(false);
+      
+      if (response.pipeline_result) {
+        setIsRunningPipeline(true);
+        setPendingResult(response.pipeline_result);
+      }
+      
     } catch (err: any) {
-      setError(err.response?.data?.detail || err.message || 'An error occurred during pipeline execution.');
-      setLayerStates({ ...INITIAL_LAYER_STATE });
-      setCurrentLayer(null);
-      setSelectedLayerId(null);
-      setIsRunning(false);
+      setError(err.response?.data?.detail || err.message || 'An error occurred communicating with the agent.');
+      setIsAgentThinking(false);
+      setIsRunningPipeline(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!pendingResult) return;
+    if (!pendingResult || !isRunningPipeline) return;
 
     let timeoutId: ReturnType<typeof setTimeout>;
     let stopped = false;
     let currentIdx = 0;
     const layers: Array<keyof PipelineRunResponse> = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7'];
+
+    // Bypass animation completely in tests for stable assertions
+    if (process.env.NODE_ENV === 'test') {
+      setResult(pendingResult);
+      if (pendingResult.overall_decision === 'ALLOW') {
+        setSelectedLayerId('L5');
+      } else {
+        setSelectedLayerId(pendingResult.stopping_layer);
+      }
+      setIsRunningPipeline(false);
+      setPendingResult(null);
+      
+      // Dispatch ECES event
+      window.dispatchEvent(
+        new CustomEvent('eces-new-session', {
+          detail: { session_id: pendingResult.session_id }
+        })
+      );
+      return;
+    }
 
     const animateLayer = () => {
       if (stopped || currentIdx >= layers.length) {
@@ -73,7 +105,7 @@ export const usePipelineExecution = () => {
         } else {
           setSelectedLayerId(pendingResult.stopping_layer);
         }
-        setIsRunning(false);
+        setIsRunningPipeline(false);
         setPendingResult(null);
         return;
       }
@@ -116,9 +148,8 @@ export const usePipelineExecution = () => {
         
         currentIdx++;
         if (!stopped && currentIdx < layers.length) {
-          timeoutId = setTimeout(animateLayer, 0); // Immediately start next layer's PROCESSING state
+          timeoutId = setTimeout(animateLayer, 0); 
         } else {
-          // If stopped or finished, wait 500ms before showing verdict banner
           timeoutId = setTimeout(() => {
             setResult(pendingResult);
             setCurrentLayer(null);
@@ -127,8 +158,16 @@ export const usePipelineExecution = () => {
             } else {
               setSelectedLayerId(pendingResult.stopping_layer);
             }
-            setIsRunning(false);
+            setIsRunningPipeline(false);
             setPendingResult(null);
+            
+            // Dispatch ECES event
+            window.dispatchEvent(
+              new CustomEvent('eces-new-session', {
+                detail: { session_id: pendingResult.session_id }
+              })
+            );
+            
           }, 500);
         }
       }, 600);
@@ -139,29 +178,33 @@ export const usePipelineExecution = () => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [pendingResult, executionId]);
+  }, [pendingResult, executionId, isRunningPipeline]);
 
   const reset = useCallback(() => {
-    setIsRunning(false);
+    setIsAgentThinking(false);
+    setIsRunningPipeline(false);
     setError(null);
+    setAgentResponse(null);
     setResult(null);
     setPendingResult(null);
     setLayerStates({ ...INITIAL_LAYER_STATE });
     setCurrentLayer(null);
     setSelectedLayerId(null);
-    setExecutionId(prev => prev + 1); // Cancel ongoing animation
+    setExecutionId(prev => prev + 1);
   }, []);
 
   return {
-    isRunning,
+    isAgentThinking,
+    isRunningPipeline,
     error,
-    result, // Only populated when animation finishes
+    agentResponse,
+    result, 
     layerStates,
     currentLayer,
     selectedLayerId,
     setSelectedLayerId,
-    executeScenario,
+    sendMessage,
     reset,
-    pendingResult // Useful to get metric values during animation
+    pendingResult 
   };
 };

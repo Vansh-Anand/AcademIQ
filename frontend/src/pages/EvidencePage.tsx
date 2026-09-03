@@ -4,13 +4,37 @@ import { SessionList } from '../components/evidence/SessionList';
 import { EvidenceTimeline } from '../components/evidence/EvidenceTimeline';
 import { ChainVerificationPanel } from '../components/evidence/ChainVerificationPanel';
 import { ErrorState } from '../components/common/ErrorState';
-import { Database, Shield } from 'lucide-react';
+import { Database, Shield, CheckCircle } from 'lucide-react';
 
 export const EvidencePage: React.FC = () => {
   const evidence = useEvidence();
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleNewSession = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setToastMessage(`New evidence session recorded — ${customEvent.detail}`);
+      // Refresh the sessions list to show the new one
+      evidence.refreshSessions();
+      
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+    };
+
+    window.addEventListener('eces-new-session', handleNewSession);
+    return () => window.removeEventListener('eces-new-session', handleNewSession);
+  }, [evidence]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-6 py-4 rounded-lg shadow-2xl border border-gray-700 flex items-center animate-bounce z-50">
+          <CheckCircle className="w-5 h-5 text-emerald-400 mr-3" />
+          <span className="font-medium">{toastMessage}</span>
+        </div>
+      )}
+
       <div className="mb-8 flex justify-between items-end">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 flex items-center">

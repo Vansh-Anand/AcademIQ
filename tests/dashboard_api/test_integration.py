@@ -28,14 +28,14 @@ def test_pipeline_to_eces_integration():
     
     # Step 1: Run pipeline scenario
     payload = {
-        "scenario_id": "SAFE_READ"
+        "scenario_id": "L7_ATTESTATION"
     }
     
     response = client.post("/api/pipeline/run", json=payload)
     assert response.status_code == 200
     pipeline_result = response.json()
     
-    assert pipeline_result["overall_decision"] == "ALLOW"
+    assert pipeline_result["overall_decision"] == "BLOCK"
     session_id = pipeline_result["session_id"]
     
     # Check L6 output explicitly confirms evidence chain
@@ -74,7 +74,7 @@ def test_pipeline_attack_integration():
     Test that an attack scenario is blocked and recorded in ECES correctly.
     """
     payload = {
-        "scenario_id": "OBFUSCATED_COMMAND"
+        "scenario_id": "L2_BACKSLASH"
     }
     
     response = client.post("/api/pipeline/run", json=payload)

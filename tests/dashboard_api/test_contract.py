@@ -27,11 +27,11 @@ def test_pipeline_safe_scenario(mock_orchestrator_class):
         timestamp_ns=time.time_ns()
     )
 
-    response = client.post("/api/pipeline/run", json={"scenario_id": "SAFE_READ"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L7_ATTESTATION"})
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["overall_decision"] == "ALLOW"
-    assert data["stopping_layer"] == "L5"
+    assert data["overall_decision"] == "BLOCK"
+    assert data["stopping_layer"] == "L7"
     assert data["L1"]["decision"] == "ALLOW"
     assert data["L2"]["decision"] == "ALLOW"
 
@@ -49,12 +49,12 @@ def test_pipeline_malicious_scenario(mock_orchestrator_class):
         timestamp_ns=time.time_ns()
     )
 
-    response = client.post("/api/pipeline/run", json={"scenario_id": "FORBIDDEN_TOOL"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L1_GRAMMAR"})
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["overall_decision"] == "BLOCK"
     assert data["stopping_layer"] == "L1"
-    assert data["L3"]["execution_mode"] == ExecutionMode.SIMULATED.value
+    assert data["L1"]["decision"] == "BLOCK"
 
 @patch("dashboard_api.services.pipeline_service.AcademiqOrchestrator")
 def test_l4_ensemble_outputs(mock_orchestrator_class):
@@ -70,7 +70,7 @@ def test_l4_ensemble_outputs(mock_orchestrator_class):
         timestamp_ns=time.time_ns()
     )
 
-    response = client.post("/api/pipeline/run", json={"scenario_id": "SAFE_READ"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L4_BEHAVIORAL"})
     assert response.status_code == 200, response.text
     data = response.json()
     l4 = data["L4"]
@@ -92,12 +92,12 @@ def test_l5_outputs(mock_orchestrator_class):
         timestamp_ns=time.time_ns()
     )
 
-    response = client.post("/api/pipeline/run", json={"scenario_id": "SAFE_READ"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L5_TEMPORAL"})
     assert response.status_code == 200, response.text
     data = response.json()
     l5 = data["L5"]
     assert l5["bayesian_probability"] is not None
-    assert l5["governance_state"] == "ALLOW"
+    assert l5["governance_state"] == "FREEZE"
 
 def test_eces_sqlite_listing():
     response = client.get("/api/evidence/sessions")

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import health, experiments, pipeline, evidence, status
+from .routers import health, experiments, pipeline, evidence, status, agent
 
 app = FastAPI(
     title="AcademIQ Dashboard API",
@@ -23,6 +23,7 @@ app.include_router(status.router, prefix="/api/system/status", tags=["system-sta
 app.include_router(experiments.router, prefix="/api/experiments", tags=["experiments"])
 app.include_router(pipeline.router, prefix="/api/pipeline", tags=["pipeline"])
 app.include_router(evidence.router, prefix="/api/evidence", tags=["evidence"])
+app.include_router(agent.router, prefix="/api/agent", tags=["agent"])
 
 @app.get("/")
 def read_root():

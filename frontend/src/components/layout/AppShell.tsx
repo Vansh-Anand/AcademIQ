@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { checkHealth } from '../../api/client';
-import { Activity, Shield, Database, Beaker, Server, CheckCircle2, AlertTriangle, Cpu } from 'lucide-react';
+import { Activity, Shield, Database, Beaker, Server, CheckCircle2, AlertTriangle, Cpu, Bot } from 'lucide-react';
 import { ExecutionModeBadge } from '../common/ExecutionModeBadge';
 import { ExecutionMode } from '../../types/api';
 
 const navigation = [
   { name: 'Overview', href: '/', icon: Activity },
+  { name: 'Live AI Agent', href: '/agent', icon: Bot },
   { name: 'Security Pipeline', href: '/pipeline', icon: Shield },
   { name: 'ECES Evidence', href: '/evidence', icon: Database },
   { name: 'Experiments', href: '/experiments', icon: Beaker },

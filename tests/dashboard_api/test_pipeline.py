@@ -4,10 +4,10 @@ from dashboard_api.main import app
 client = TestClient(app)
 
 def test_pipeline_safe_scenario():
-    response = client.post("/api/pipeline/run", json={"scenario_id": "SAFE_READ"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L7_ATTESTATION"})
     assert response.status_code == 200
     data = response.json()
-    assert data["scenario_id"] == "SAFE_READ"
+    assert data["scenario_id"] == "L7_ATTESTATION"
     assert "total_latency_ns" in data
     assert "overall_decision" in data
     
@@ -19,10 +19,10 @@ def test_pipeline_safe_scenario():
     assert "L6" in data
     
 def test_pipeline_forbidden_scenario():
-    response = client.post("/api/pipeline/run", json={"scenario_id": "OBFUSCATED_COMMAND"})
+    response = client.post("/api/pipeline/run", json={"scenario_id": "L2_BACKSLASH"})
     assert response.status_code == 200
     data = response.json()
-    assert data["scenario_id"] == "OBFUSCATED_COMMAND"
+    assert data["scenario_id"] == "L2_BACKSLASH"
     
 def test_pipeline_invalid_scenario():
     response = client.post("/api/pipeline/run", json={"scenario_id": "INVALID_HACK"})

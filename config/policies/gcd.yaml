@@ -2,11 +2,16 @@ allowed_tools:
   - read_file
   - list_directory
   - shell
+  - execute_command
+  - http_post
 
 allowed_shell_commands:
   - ls
   - pwd
   - cat
+  - echo
+  - curl
+  - wget
 
 forbidden_shell_commands:
   - rm

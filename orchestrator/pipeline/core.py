@@ -58,8 +58,9 @@ class AcademiqOrchestrator:
             grammar = compiler.compile_policy(policy_dict)
             pda = PushdownAutomaton(grammar)
             
-            # Check if the requested tool in the event is a valid prefix
-            mock_token_stream = f'{event.tool_name}("{event.arguments.get("path", "")}")'
+            # Extract the primary argument for the mock token stream (first value in dict or empty string)
+            arg_val = list(event.arguments.values())[0] if event.arguments else ""
+            mock_token_stream = f'{event.tool_name}("{arg_val}")'
             print(f"L1 GCD -> Checking tool invocation: {mock_token_stream}")
             
             # Very basic check: does it match any valid prefix in the automaton?
@@ -123,7 +124,8 @@ class AcademiqOrchestrator:
             # For example, if L1 allowed read_file("/etc/passwd"), the underlying tool
             # execution might correspond to a shell command like `cat /etc/passwd`
             # For this test, we construct the shell equivalent
-            mock_shell_cmd = f"cat {event.arguments.get('path', '')}"
+            arg_val = list(event.arguments.values())[0] if event.arguments else ""
+            mock_shell_cmd = arg_val if event.tool_name == "execute_command" else f"cat {arg_val}"
             print(f"L2 SDN -> Intercepting shell payload: {mock_shell_cmd}")
             
             shell_event = ShellCommandEvent(

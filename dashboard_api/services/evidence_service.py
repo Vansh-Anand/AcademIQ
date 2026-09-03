@@ -5,13 +5,13 @@ from typing import List, Optional
 
 from dashboard_api.schemas.evidence import SessionListItem, SessionListResponse, ChainRecord, SessionDetailResponse, VerifyResponse
 from dashboard_api.schemas.common import ExecutionMode
-from l6_eces.storage.sqlite_store import SQLiteEvidenceStore
+from l6_eces.storage.sqlite_store import SQLiteEvidenceStore, DEFAULT_DB_PATH
 from l6_eces.crypto.hasher import HashProvider
 from l6_eces.crypto.signer import SoftwareSigner
 from l6_eces.forensics.verifier import EvidenceVerifier
 
 class EvidenceService:
-    def __init__(self, db_path: str = ".data/evidence/eces.db"):
+    def __init__(self, db_path: str = DEFAULT_DB_PATH):
         self.db_path = db_path
         
     def get_sessions(self) -> SessionListResponse:
